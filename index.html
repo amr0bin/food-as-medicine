@@ -1,0 +1,2707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Seasonal Kitchen</title>
+<link href="https://fonts.googleapis.com/css2?family=ASAP:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #fefdf9;
+    --cream: #f7f4ec;
+    --parchment: #ede8d8;
+    --sage-light: #e8ede4;
+    --blue: #4a7fa5;
+    --blue-light: #c8dff0;
+    --blue-pale: #eaf3fa;
+    --pink: #d4788a;
+    --pink-light: #f5d6dc;
+    --pink-pale: #fdf0f2;
+    --yellow: #c9a84c;
+    --yellow-light: #f0e4be;
+    --yellow-pale: #faf5e4;
+    --sky: #89b4cc;
+    --sky-light: #d0e8f5;
+    --sky-pale: #f0f8fd;
+    --text-dark: #2c2825;
+    --text-mid: #5a534a;
+    --text-light: #8a8078;
+    --sidebar-w: 260px;
+    --spring: #89b4cc;
+    --spring-dark: #4a7fa5;
+    --summer: #d4788a;
+    --summer-dark: #b05568;
+    --autumn: #c9a84c;
+    --autumn-dark: #9a7c32;
+    --winter: #6a9eb5;
+    --winter-dark: #3d7a9a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'ASAP', sans-serif;
+    background: var(--white);
+    color: var(--text-dark);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Nature background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(74,127,165,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 90% 10%, rgba(212,120,138,0.05) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='0.5' fill='%23a09880' opacity='0.25'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: var(--cream);
+    border-right: 1px solid var(--parchment);
+    position: fixed;
+    top: 0; left: 0;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 2rem 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  .sidebar-logo {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+  }
+
+  .sidebar-logo span {
+    display: block;
+    font-size: 0.75rem;
+    font-family: 'ASAP', sans-serif;
+    font-weight: 300;
+    color: var(--text-light);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  .sidebar-nav { padding: 1rem 0; flex: 1; }
+
+  .season-group { margin-bottom: 0.25rem; }
+
+  .season-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'ASAP', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    transition: all 0.2s;
+  }
+
+  .season-toggle:hover { background: var(--parchment); }
+
+  .season-toggle.active { color: var(--text-dark); }
+
+  .season-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .season-toggle.spring .season-dot { background: var(--spring); }
+  .season-toggle.summer .season-dot { background: var(--summer); }
+  .season-toggle.autumn .season-dot { background: var(--autumn); }
+  .season-toggle.winter .season-dot { background: var(--winter); }
+
+  .season-toggle.active.spring { color: var(--spring-dark); }
+  .season-toggle.active.summer { color: var(--summer-dark); }
+  .season-toggle.active.autumn { color: var(--autumn-dark); }
+  .season-toggle.active.winter { color: var(--winter-dark); }
+
+  .chevron { margin-left: auto; font-size: 0.7rem; transition: transform 0.2s; }
+  .season-toggle.open .chevron { transform: rotate(180deg); }
+
+  .season-pages {
+    display: none;
+    background: rgba(255,255,255,0.5);
+  }
+  .season-pages.open { display: block; }
+
+  .page-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1.5rem 0.55rem 2.5rem;
+    color: var(--text-mid);
+    text-decoration: none;
+    font-size: 0.82rem;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .page-link:hover {
+    color: var(--text-dark);
+    background: var(--parchment);
+  }
+
+  .page-link.active {
+    color: var(--text-dark);
+    font-weight: 500;
+    background: var(--parchment);
+  }
+
+  .page-link.active.spring { border-left-color: var(--spring); }
+  .page-link.active.summer { border-left-color: var(--summer); }
+  .page-link.active.autumn { border-left-color: var(--autumn); }
+  .page-link.active.winter { border-left-color: var(--winter); }
+
+  .page-icon { font-size: 0.85rem; opacity: 0.7; }
+
+  .sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--parchment);
+    font-size: 0.72rem;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+
+  /* MAIN CONTENT */
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-section { display: none; padding: 3rem; max-width: 900px; }
+  .page-section.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  .season-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .badge-spring { background: var(--sky-light); color: var(--spring-dark); }
+  .badge-summer { background: var(--pink-light); color: var(--summer-dark); }
+  .badge-autumn { background: var(--yellow-light); color: var(--autumn-dark); }
+  .badge-winter { background: var(--blue-light); color: var(--winter-dark); }
+
+  .page-title {
+    font-family: 'ASAP', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* LANDING PAGE */
+  .home-hero {
+    padding: 4rem 3rem 2rem;
+    max-width: 800px;
+  }
+
+  .home-title {
+    font-family: 'ASAP', sans-serif;
+    font-size: 4rem;
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .home-title em {
+    font-style: italic;
+    color: var(--text-mid);
+  }
+
+  .home-intro {
+    font-size: 1rem;
+    color: var(--text-mid);
+    line-height: 1.8;
+    max-width: 560px;
+    margin-bottom: 3rem;
+  }
+
+  .season-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .season-card {
+    background: var(--white);
+    border: 1px solid var(--parchment);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .season-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .season-card.spring::before { background: var(--spring); }
+  .season-card.summer::before { background: var(--summer); }
+  .season-card.autumn::before { background: var(--autumn); }
+  .season-card.winter::before { background: var(--winter); }
+
+  .season-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+
+  .season-card-title {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .season-card.spring .season-card-title { color: var(--spring-dark); }
+  .season-card.summer .season-card-title { color: var(--summer-dark); }
+  .season-card.autumn .season-card-title { color: var(--autumn-dark); }
+  .season-card.winter .season-card-title { color: var(--winter-dark); }
+
+  .season-card-months {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .season-card-desc {
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+
+  /* GUIDELINES SECTION */
+  .guidelines-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .guideline-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  .guideline-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 3rem; }
+
+  .section-title {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--parchment);
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+  }
+
+  /* WEEKLY MENU TABLE */
+  .menu-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+
+  .menu-table th {
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: var(--cream);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  .menu-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--parchment);
+    vertical-align: top;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  .menu-table tr:last-child td { border-bottom: none; }
+
+  .meal-name {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+    font-size: 0.85rem;
+  }
+
+  .meal-note {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  .protein-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
+  .tag-spring { background: var(--sky-light); color: var(--spring-dark); }
+  .tag-summer { background: var(--pink-light); color: var(--summer-dark); }
+  .tag-autumn { background: var(--yellow-light); color: var(--autumn-dark); }
+  .tag-winter { background: var(--blue-light); color: var(--winter-dark); }
+
+  /* SHOPPING LIST */
+  .shopping-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .shopping-category {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 1.1rem;
+  }
+
+  .shopping-category h4 {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  .shopping-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    padding: 0.25rem 0;
+    line-height: 1.4;
+  }
+
+  .check-box {
+    width: 13px; height: 13px;
+    border: 1.5px solid var(--parchment);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .check-box.checked { background: var(--text-light); border-color: var(--text-light); }
+
+  /* BATCH COOKING */
+  .batch-timeline { position: relative; }
+
+  .batch-block {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .batch-time {
+    text-align: right;
+    padding-top: 0.15rem;
+  }
+
+  .batch-time-main {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+  }
+
+  .batch-time-label {
+    font-size: 0.7rem;
+    color: var(--text-light);
+  }
+
+  .batch-content {
+    border-left: 2px solid var(--parchment);
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .batch-content::before {
+    content: '';
+    position: absolute;
+    left: -5px; top: 5px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--parchment);
+    border: 2px solid var(--white);
+  }
+
+  .batch-title {
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+  }
+
+  .batch-tasks {
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+
+  .batch-tasks li::before {
+    content: '→';
+    margin-right: 0.4rem;
+    opacity: 0.4;
+  }
+
+  /* RECIPES */
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .recipe-card {
+    background: var(--white);
+    border: 1px solid var(--parchment);
+    border-radius: 10px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .recipe-card:hover {
+    border-color: var(--sky);
+    box-shadow: 0 4px 12px rgba(74,127,165,0.08);
+  }
+
+  .recipe-card-title {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+  }
+
+  .recipe-meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.72rem;
+    color: var(--text-light);
+    margin-bottom: 0.6rem;
+  }
+
+  .recipe-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  .recipe-tag {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    background: var(--cream);
+    color: var(--text-mid);
+  }
+
+  /* RECIPE DETAIL */
+  .recipe-detail {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--parchment);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .recipe-detail.open { display: block; }
+
+  .recipe-detail-title {
+    font-family: 'ASAP', sans-serif;
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .recipe-info-row {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  .recipe-cols {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+  }
+
+  .ingredients-list {
+    list-style: none;
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    line-height: 2;
+  }
+
+  .ingredients-list li {
+    border-bottom: 1px solid var(--parchment);
+    padding: 0.1rem 0;
+  }
+
+  .steps-list {
+    list-style: none;
+    counter-reset: steps;
+  }
+
+  .steps-list li {
+    counter-increment: steps;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.84rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  .steps-list li::before {
+    content: counter(steps);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    min-width: 22px;
+    background: var(--cream);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-mid);
+    margin-top: 0.2rem;
+  }
+
+  .close-recipe {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-family: 'ASAP', sans-serif;
+  }
+
+  .close-recipe:hover { color: var(--text-dark); }
+
+  /* KITCHEN SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .skill-card {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .skill-card h4 {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-list {
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    line-height: 1.9;
+  }
+
+  .skill-list li { position: relative; padding-left: 1rem; }
+
+  .skill-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--text-light);
+  }
+
+  /* PROTEIN TRACKER */
+  .protein-bar {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .protein-stat {
+    text-align: center;
+  }
+
+  .protein-number {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    line-height: 1;
+  }
+
+  .protein-label {
+    font-size: 0.68rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .protein-divider { width: 1px; height: 40px; background: var(--parchment); }
+
+  /* SCHEDULE GRID */
+  .schedule-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--parchment);
+    align-items: start;
+  }
+
+  .schedule-time {
+    font-family: 'ASAP', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+  }
+
+  .schedule-content { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+  .schedule-content strong { color: var(--text-dark); font-weight: 500; }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .callout-info { background: var(--sky-pale); color: var(--spring-dark); border-left: 3px solid var(--sky); }
+  .callout-tip { background: var(--yellow-pale); color: var(--autumn-dark); border-left: 3px solid var(--yellow); }
+  .callout-warm { background: var(--pink-pale); color: var(--summer-dark); border-left: 3px solid var(--pink); }
+
+  .callout-icon { font-size: 1rem; flex-shrink: 0; }
+
+  /* VEGETABLE COUNTER */
+  .veg-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .veg-pill {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 12px;
+    background: var(--sage-light);
+    color: var(--text-mid);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 220px; }
+    .season-cards, .recipe-grid, .skills-grid, .shopping-grid { grid-template-columns: 1fr; }
+    .recipe-cols { grid-template-columns: 1fr; }
+    .page-section { padding: 2rem 1.5rem; }
+    .home-hero { padding: 2rem 1.5rem; }
+    .home-title { font-size: 2.8rem; }
+  }
+
+  @media print {
+    #sidebar { display: none; }
+    #main { margin-left: 0; }
+    .page-section { display: block !important; }
+  }
+
+  /* PRINT BUTTON */
+  .print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--parchment);
+    border-radius: 6px;
+    padding: 0.35rem 0.75rem;
+    font-family: 'ASAP', sans-serif;
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+
+  .print-btn:hover { color: var(--text-dark); border-color: var(--text-light); }
+
+  /* SNACK LIST */
+  .snack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .snack-item {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.78rem;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      The Seasonal Kitchen
+      <span>A Year of Nourishment</span>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div style="padding: 0.5rem 1.5rem 0.25rem;">
+      <a href="#" class="page-link" onclick="showPage('home'); return false;" style="padding-left: 1.5rem; font-size: 0.8rem;">
+        🏠 Home & Guidelines
+      </a>
+    </div>
+
+    <!-- SPRING -->
+    <div class="season-group">
+      <button class="season-toggle spring" onclick="toggleSeason('spring', this)">
+        <span class="season-dot"></span>
+        Spring
+        <span class="chevron">▾</span>
+      </button>
+      <div class="season-pages" id="spring-pages">
+        <a href="#" class="page-link spring" onclick="showPage('spring-menu'); return false;">📅 Weekly Menu</a>
+        <a href="#" class="page-link spring" onclick="showPage('spring-shopping'); return false;">🛒 Shopping List</a>
+        <a href="#" class="page-link spring" onclick="showPage('spring-batch'); return false;">🍳 Batch Cooking</a>
+        <a href="#" class="page-link spring" onclick="showPage('spring-recipes'); return false;">📖 Recipes</a>
+        <a href="#" class="page-link spring" onclick="showPage('kitchen-skills'); return false;">🔪 Kitchen Skills</a>
+      </div>
+    </div>
+
+    <!-- SUMMER -->
+    <div class="season-group">
+      <button class="season-toggle summer" onclick="toggleSeason('summer', this)">
+        <span class="season-dot"></span>
+        Summer
+        <span class="chevron">▾</span>
+      </button>
+      <div class="season-pages" id="summer-pages">
+        <a href="#" class="page-link summer" onclick="showPage('summer-menu'); return false;">📅 Weekly Menu</a>
+        <a href="#" class="page-link summer" onclick="showPage('summer-shopping'); return false;">🛒 Shopping List</a>
+        <a href="#" class="page-link summer" onclick="showPage('summer-batch'); return false;">🍳 Batch Cooking</a>
+        <a href="#" class="page-link summer" onclick="showPage('summer-recipes'); return false;">📖 Recipes</a>
+        <a href="#" class="page-link summer" onclick="showPage('kitchen-skills'); return false;">🔪 Kitchen Skills</a>
+      </div>
+    </div>
+
+    <!-- AUTUMN -->
+    <div class="season-group">
+      <button class="season-toggle autumn" onclick="toggleSeason('autumn', this)">
+        <span class="season-dot"></span>
+        Autumn
+        <span class="chevron">▾</span>
+      </button>
+      <div class="season-pages" id="autumn-pages">
+        <a href="#" class="page-link autumn" onclick="showPage('autumn-menu'); return false;">📅 Weekly Menu</a>
+        <a href="#" class="page-link autumn" onclick="showPage('autumn-shopping'); return false;">🛒 Shopping List</a>
+        <a href="#" class="page-link autumn" onclick="showPage('autumn-batch'); return false;">🍳 Batch Cooking</a>
+        <a href="#" class="page-link autumn" onclick="showPage('autumn-recipes'); return false;">📖 Recipes</a>
+        <a href="#" class="page-link autumn" onclick="showPage('kitchen-skills'); return false;">🔪 Kitchen Skills</a>
+      </div>
+    </div>
+
+    <!-- WINTER -->
+    <div class="season-group">
+      <button class="season-toggle winter" onclick="toggleSeason('winter', this)">
+        <span class="season-dot"></span>
+        Winter
+        <span class="chevron">▾</span>
+      </button>
+      <div class="season-pages" id="winter-pages">
+        <a href="#" class="page-link winter" onclick="showPage('winter-menu'); return false;">📅 Weekly Menu</a>
+        <a href="#" class="page-link winter" onclick="showPage('winter-shopping'); return false;">🛒 Shopping List</a>
+        <a href="#" class="page-link winter" onclick="showPage('winter-batch'); return false;">🍳 Batch Cooking</a>
+        <a href="#" class="page-link winter" onclick="showPage('winter-recipes'); return false;">📖 Recipes</a>
+        <a href="#" class="page-link winter" onclick="showPage('kitchen-skills'); return false;">🔪 Kitchen Skills</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    Guided by whole foods, seasonal rhythms, and the joy of cooking from scratch.
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page-section active" style="max-width: 900px;">
+    <div class="home-hero" style="padding: 3rem 0 2rem;">
+      <div class="home-title">
+        Eat with the <em>seasons,</em><br>nourish with intention.
+      </div>
+      <p class="home-intro">
+        A personal kitchen resource rooted in whole foods, anti-inflammatory principles, and the pleasure of cooking beautiful, nourishing meals through every season of the year.
+      </p>
+    </div>
+
+    <div style="padding: 0 0 3rem;">
+      <div class="section-label">Navigate by season</div>
+      <div class="season-cards">
+        <div class="season-card spring" onclick="openSeason('spring', 'spring-menu')">
+          <div class="season-card-title">🌸 Spring</div>
+          <div class="season-card-months">March · April · May</div>
+          <div class="season-card-desc">Tender greens, asparagus, peas, radishes, fresh herbs. Light proteins and bright citrus dressings. Time to cleanse and energise.</div>
+        </div>
+        <div class="season-card summer" onclick="openSeason('summer', 'summer-menu')">
+          <div class="season-card-title">☀️ Summer</div>
+          <div class="season-card-months">June · July · August</div>
+          <div class="season-card-desc">Courgettes, tomatoes, peppers, aubergine, fresh basil. Raw salads, grilled fish, cold broths. Light and vibrant eating.</div>
+        </div>
+        <div class="season-card autumn" onclick="openSeason('autumn', 'autumn-menu')">
+          <div class="season-card-title">🍂 Autumn</div>
+          <div class="season-card-months">September · October · November</div>
+          <div class="season-card-desc">Squash, beetroot, mushrooms, fennel, kale. Roasted dishes, warming bowls, hearty proteins. Grounding and restorative.</div>
+        </div>
+        <div class="season-card winter" onclick="openSeason('winter', 'winter-menu')">
+          <div class="season-card-title">❄️ Winter</div>
+          <div class="season-card-months">December · January · February</div>
+          <div class="season-card-desc">Celeriac, Brussels sprouts, citrus, cauliflower, root veg. Slow braises, warming broths, nourishing stews. Deep restoration.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title" style="font-size: 1.4rem;">Daily Guidelines</div>
+        <div class="guidelines-grid">
+          <div class="guideline-item"><span class="guideline-icon">🥩</span><div><strong>180g+ protein daily</strong> — 60g at each of three meals</div></div>
+          <div class="guideline-item"><span class="guideline-icon">🥬</span><div><strong>30+ vegetable varieties weekly</strong> — leafy greens, sulphur-rich, and brightly coloured at every meal</div></div>
+          <div class="guideline-item"><span class="guideline-icon">⏰</span><div><strong>Eating window: 5:30 AM – 3:00 PM</strong> — unless evening plans with friends</div></div>
+          <div class="guideline-item"><span class="guideline-icon">💪</span><div><strong>15g protein within 30 minutes of waking</strong> — before exercise</div></div>
+          <div class="guideline-item"><span class="guideline-icon">🚶</span><div><strong>Move after every meal</strong> — walk, gentle movement, or exercise</div></div>
+          <div class="guideline-item"><span class="guideline-icon">💧</span><div><strong>2+ litres of water daily</strong> — more on active days</div></div>
+          <div class="guideline-item"><span class="guideline-icon">🚫</span><div><strong>Avoid:</strong> ultra-processed foods, dairy (except occasional goat/sheep), gluten, refined sugar</div></div>
+          <div class="guideline-item"><span class="guideline-icon">🫙</span><div><strong>Fermented foods</strong> — include daily at breakfast: kombucha, kimchi, sauerkraut</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title" style="font-size: 1.4rem;">Daily Structure</div>
+        <div class="schedule-row">
+          <div class="schedule-time">5:00 AM</div>
+          <div class="schedule-content"><strong>Breakfast</strong> — 3 eggs, ½ avocado, creatine in water, tea. Walk outside for early sun exposure, then morning workout. 60g protein + cooked leafy greens + sulphur-rich + brightly coloured vegetables + bone broth + fermented foods.</div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">11:30 AM</div>
+          <div class="schedule-content"><strong>Lunch</strong> + walking meditation — large salad feast, 60g protein, 3 cups each of leafy greens, brightly coloured, and sulphur-rich vegetables. Water and tea.</div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">2:00–4:00 PM</div>
+          <div class="schedule-content"><strong>Dinner</strong> — 60g protein, salad feast with 9 cups of vegetables across three categories. Herbal tea. On weekdays: 45–90 minutes vigorous exercise before dinner to end stress cycles.</div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">8:00 PM</div>
+          <div class="schedule-content"><strong>Evening routine</strong> — slow walk, bath, meditation, reading, rest.</div>
+        </div>
+
+        <div class="section-label" style="margin-top: 1.5rem;">Anytime snacks (5 AM – 3 PM)</div>
+        <div class="snack-grid">
+          <div class="snack-item">🌿 Dried seaweed</div>
+          <div class="snack-item">🥜 Nuts and seeds</div>
+          <div class="snack-item">🫐 Dehydrated berries</div>
+          <div class="snack-item">🍫 Liver pâté + crackers</div>
+          <div class="snack-item">🥤 Berry-greens smoothie</div>
+          <div class="snack-item">🥦 Crudités + dressing</div>
+          <div class="snack-item">🍫 Dark chocolate</div>
+          <div class="snack-item">🍬 Homemade halva</div>
+          <div class="snack-item">🐟 Salmon jerky</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== SPRING ========== -->
+
+  <!-- SPRING MENU -->
+  <div id="page-spring-menu" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-spring">🌸 Spring</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <h1 class="page-title">Weekly Menu</h1>
+          <p class="page-subtitle">March · April · May — tender greens, asparagus, peas, fresh herbs</p>
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+
+    <div class="protein-bar">
+      <div class="protein-stat"><div class="protein-number">180g+</div><div class="protein-label">Protein daily</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">60g</div><div class="protein-label">Per meal</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">30+</div><div class="protein-label">Veg varieties/week</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">9 cups</div><div class="protein-label">Veg per meal</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Spring Week Overview</div>
+      <table class="menu-table">
+        <thead>
+          <tr>
+            <th style="width:100px;">Day</th>
+            <th>Breakfast 5 AM</th>
+            <th>Lunch 11:30 AM</th>
+            <th>Dinner 2 PM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Monday</strong></td>
+            <td><div class="meal-name">Golden Egg Pan <span class="protein-tag tag-spring">~30g</span></div><div class="meal-note">+ Swiss chard, avocado, bone broth</div></td>
+            <td><div class="meal-name">Green Goddess Salad <span class="protein-tag tag-spring">~25g</span></div><div class="meal-note">+ poached salmon</div></td>
+            <td><div class="meal-name">Charred Prawns, Cannellini Beans + Fennel <span class="protein-tag tag-spring">~35g</span></div></td>
+          </tr>
+          <tr>
+            <td><strong>Tuesday</strong></td>
+            <td><div class="meal-name">Superfood Omelet, Greek-style <span class="protein-tag tag-spring">~28g</span></div><div class="meal-note">+ fermented foods, bone broth</div></td>
+            <td><div class="meal-name">Supergreen Tabbouleh + Turkey Meatballs <span class="protein-tag tag-spring">~40g</span></div></td>
+            <td><div class="meal-name">Crispy Salmon Piccata <span class="protein-tag tag-spring">~45g</span></div><div class="meal-note">+ asparagus or broccoli</div></td>
+          </tr>
+          <tr>
+            <td><strong>Wednesday</strong></td>
+            <td><div class="meal-name">Spanish Scramble <span class="protein-tag tag-spring">~35g</span></div><div class="meal-note">+ avocado, fermented foods</div></td>
+            <td><div class="meal-name">Steak Salad Bowl with Asparagus + Avocado <span class="protein-tag tag-spring">~50g</span></div></td>
+            <td><div class="meal-name">Green Spinach & Salmon Crepes <span class="protein-tag tag-spring">~40g</span></div></td>
+          </tr>
+          <tr>
+            <td><strong>Thursday</strong></td>
+            <td><div class="meal-name">Sausage-avo-egg Stack <span class="protein-tag tag-spring">~35g</span></div><div class="meal-note">+ leafy greens, bone broth</div></td>
+            <td><div class="meal-name">Five-Superfood Salmon Brain Bowl <span class="protein-tag tag-spring">~45g</span></div></td>
+            <td><div class="meal-name">Chile-Lime Mackerel + Coriander Slaw <span class="protein-tag tag-spring">~38g</span></div></td>
+          </tr>
+          <tr>
+            <td><strong>Friday</strong></td>
+            <td><div class="meal-name">Greek Breakfast Power Bowl <span class="protein-tag tag-spring">~35g</span></div><div class="meal-note">+ fermented foods</div></td>
+            <td><div class="meal-name">Unwich Antipasti Chicken <span class="protein-tag tag-spring">~40g</span></div></td>
+            <td><div class="meal-name">Sardine Patties + Olive Tapenade <span class="protein-tag tag-spring">~35g</span></div></td>
+          </tr>
+          <tr>
+            <td><strong>Saturday</strong></td>
+            <td><div class="meal-name">Sunday Frittata Muffins, Smoked Salmon <span class="protein-tag tag-spring">~40g</span></div><div class="meal-note">Batch cook day — prep for week</div></td>
+            <td><div class="meal-name">Taverna-Style Greek Salad + protein <span class="protein-tag tag-spring">~40g</span></div></td>
+            <td><div class="meal-name">Roast Chicken (Garlic, Thyme + Spring Onion) <span class="protein-tag tag-spring">~55g</span></div></td>
+          </tr>
+          <tr>
+            <td><strong>Sunday</strong></td>
+            <td><div class="meal-name">Superfood Shakshuka <span class="protein-tag tag-spring">~30g</span></div><div class="meal-note">+ fermented foods</div></td>
+            <td><div class="meal-name">Best Salmon & Avocado Salad <span class="protein-tag tag-spring">~42g</span></div></td>
+            <td><div class="meal-name">Thyroid-Friendly Salmon Fish Cakes <span class="protein-tag tag-spring">~40g</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Spring Vegetables (30+ weekly)</div>
+      <div class="callout callout-info"><span class="callout-icon">ℹ️</span> Rotate through these each week to hit 30+ varieties. Focus on what's freshest at market.</div>
+      <div class="veg-grid">
+        <span class="veg-pill">Asparagus</span><span class="veg-pill">Peas</span><span class="veg-pill">Spring onions</span><span class="veg-pill">Radishes</span><span class="veg-pill">Spinach</span><span class="veg-pill">Watercress</span><span class="veg-pill">Rocket</span><span class="veg-pill">Swiss chard</span><span class="veg-pill">Courgette</span><span class="veg-pill">Fennel</span><span class="veg-pill">Broccoli</span><span class="veg-pill">Red pepper</span><span class="veg-pill">Cucumber</span><span class="veg-pill">Avocado</span><span class="veg-pill">Kale</span><span class="veg-pill">Artichoke hearts</span><span class="veg-pill">Broccolini</span><span class="veg-pill">Broad beans</span><span class="veg-pill">Sugar snap peas</span><span class="veg-pill">Fresh parsley</span><span class="veg-pill">Mint</span><span class="veg-pill">Dill</span><span class="veg-pill">Basil</span><span class="veg-pill">Tarragon</span><span class="veg-pill">Chives</span><span class="veg-pill">Green beans</span><span class="veg-pill">Celery</span><span class="veg-pill">Red onion</span><span class="veg-pill">Cherry tomatoes</span><span class="veg-pill">Leek</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRING SHOPPING -->
+  <div id="page-spring-shopping" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-spring">🌸 Spring</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <h1 class="page-title">Weekly Shopping List</h1>
+          <p class="page-subtitle">Click items to check off as you shop</p>
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+
+    <div class="callout callout-tip"><span class="callout-icon">💡</span> Saturday morning is main shop day. Wednesday, pick up fresh fish and any wilted greens that need replacing.</div>
+
+    <div class="section">
+      <div class="section-title">Saturday Main Shop</div>
+      <div class="shopping-grid">
+        <div class="shopping-category">
+          <h4>🐟 Proteins</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Wild salmon fillets (4–6)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Whole chicken (1.6kg)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Raw tiger prawns (325g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned sardines (3 tins)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Smoked salmon (200g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Mackerel fillets (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground turkey (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground pork (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Beef steaks (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Eggs (18+)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Chicken livers (500g)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🥬 Leafy Greens</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Swiss chard (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Spinach, fresh (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Rocket (2 bags)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Watercress (1 bag)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Kale (200g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Gem lettuce (2 heads)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Frozen spinach (500g)</div>
+          <h4 style="margin-top:1rem;">🌈 Brightly Coloured</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Red bell peppers (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cherry tomatoes (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Avocados (6–8)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Beets (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Carrots (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Radishes (1 bunch)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🧄 Sulphur-Rich Veg</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Broccoli (2 heads)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Asparagus (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Courgettes (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fennel (2 bulbs)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Red onions (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Spring onions (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Garlic (2 bulbs)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Green beans (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Sugar snap peas (200g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Leeks (2)</div>
+          <h4 style="margin-top:1rem;">🫙 Fats & Pantry</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Avocado oil (large bottle)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Extra-virgin olive oil</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ghee (jar)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coconut oil</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Tahini</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Capers (jar)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Kalamata olives</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Anchovies in oil (tin)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned tomatoes (2)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cannellini beans (tin)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Collagen powder</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Creatine</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Bone broth (or carcass for homemade)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Wednesday Top-Up</div>
+      <div class="shopping-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="shopping-category">
+          <h4>🐟 Fresh Fish</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fresh fish (whatever looks best)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Prawns if needed</div>
+          <h4 style="margin-top:1rem;">🥬 Greens Refresh</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Any wilted greens to replace</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fresh herbs (if running low)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Avocados (3–4 ripe)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🫙 Fermented & Special</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Kombucha (if running low)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Seasonal fruit for snacks</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Eggs (if running low)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Any specific recipe needs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRING BATCH -->
+  <div id="page-spring-batch" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-spring">🌸 Spring</div>
+      <h1 class="page-title">Batch Cooking Plan</h1>
+      <p class="page-subtitle">Saturday morning (3–4 hours) + Wednesday top-up (45 min)</p>
+    </div>
+
+    <div class="callout callout-info"><span class="callout-icon">💡</span> The goal: protein pre-cooked, sauces and dressings made, greens prepped, and key components ready to assemble rapidly all week.</div>
+
+    <div class="section">
+      <div class="section-title">Saturday Morning: 7 AM – 11 AM</div>
+      <div class="batch-timeline">
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">7:00</div><div class="batch-time-label">Start</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Oven on + bone broth simmering</div>
+            <ul class="batch-tasks">
+              <li>Put bone broth on very low simmer (or start slow cooker)</li>
+              <li>Preheat oven to 200°C</li>
+              <li>Hard-boil 6–8 eggs (use timer: 9 minutes)</li>
+              <li>Prep your breakfast while things heat up</li>
+            </ul>
+          </div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">7:30</div><div class="batch-time-label">Oven active</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Roast chicken + tray vegetables</div>
+            <ul class="batch-tasks">
+              <li>Season whole chicken, place in oven (65 min at 200°C)</li>
+              <li>Fill a second tray with chopped broccoli, asparagus, carrots — roast alongside</li>
+              <li>Make Sunday Frittata Muffins (smoked salmon filling) — bake 20 min</li>
+            </ul>
+          </div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">8:00</div><div class="batch-time-label">Prep work</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Sauces, dressings & ferments</div>
+            <ul class="batch-tasks">
+              <li>Make Salsa Verde — keep in jar in fridge (4 days)</li>
+              <li>Make Chicken Liver Pâté — store under ghee seal</li>
+              <li>Make Fennel Tzatziki (if using goat/sheep yoghurt)</li>
+              <li>Make Supergreen Tabbouleh base (broccoli rice, no dressing yet)</li>
+              <li>Make Green Goddess dressing</li>
+            </ul>
+          </div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">9:00</div><div class="batch-time-label">Proteins</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Additional protein prep</div>
+            <ul class="batch-tasks">
+              <li>Make turkey meatball mixture — shape and refrigerate (cook fresh per meal)</li>
+              <li>Make sausage meat batch — portion into 125g balls, freeze extras</li>
+              <li>Make sardine patty mixture — refrigerate, cook fresh</li>
+            </ul>
+          </div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">9:45</div><div class="batch-time-label">Greens</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Wash, prep and cook greens</div>
+            <ul class="batch-tasks">
+              <li>Wash and spin all salad greens — store in airtight containers lined with paper towel</li>
+              <li>Sauté large batch of Swiss chard in coconut oil — store in fridge</li>
+              <li>Spiralize 3–4 courgettes for noodles — store dry in container</li>
+              <li>Blanch asparagus (2 minutes) — refresh in ice water, store</li>
+            </ul>
+          </div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">10:30</div><div class="batch-time-label">Wrap up</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Label, store, clean</div>
+            <ul class="batch-tasks">
+              <li>Portion chicken — shred half, keep half pieces intact</li>
+              <li>Strain bone broth, add salt and lemon, portion into jars</li>
+              <li>Label everything with date and contents</li>
+              <li>Write fridge map: what's in each container</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Wednesday Top-Up: 30–45 minutes</div>
+      <div class="batch-timeline">
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">15 min</div><div class="batch-time-label">Cook</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Fresh protein + refresh greens</div>
+            <ul class="batch-tasks">
+              <li>Cook fresh fish (mackerel or salmon) for that day's meals</li>
+              <li>Wash any fresh herbs or greens just bought</li>
+              <li>Make a quick sauce if any running low (e.g. tapenade, salsa)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">15 min</div><div class="batch-time-label">Assess</div></div>
+          <div class="batch-content">
+            <div class="batch-title">Mid-week audit</div>
+            <ul class="batch-tasks">
+              <li>Check what proteins remain — plan Thu/Fri/Sat accordingly</li>
+              <li>Refresh any dressings that are running out</li>
+              <li>Replenish avocados if needed (leave on counter to ripen)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Fridge Storage Guide</div>
+      <div class="shopping-grid">
+        <div class="shopping-category">
+          <h4>Day 1–3</h4>
+          <div class="shopping-item"><span>🐟</span> Fresh fish (use first)</div>
+          <div class="shopping-item"><span>🥗</span> Dressed salads</div>
+          <div class="shopping-item"><span>🥩</span> Cooked chicken</div>
+          <div class="shopping-item"><span>🥚</span> Hard-boiled eggs</div>
+        </div>
+        <div class="shopping-category">
+          <h4>Day 3–5</h4>
+          <div class="shopping-item"><span>🫙</span> Salsa verde</div>
+          <div class="shopping-item"><span>🥫</span> Liver pâté</div>
+          <div class="shopping-item"><span>🥬</span> Cooked greens</div>
+          <div class="shopping-item"><span>🍳</span> Frittata muffins</div>
+        </div>
+        <div class="shopping-category">
+          <h4>Freezer</h4>
+          <div class="shopping-item"><span>🥩</span> Sausage meat portions</div>
+          <div class="shopping-item"><span>🫙</span> Bone broth (extra)</div>
+          <div class="shopping-item"><span>🫐</span> Frozen berries</div>
+          <div class="shopping-item"><span>🥬</span> Frozen spinach</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRING RECIPES -->
+  <div id="page-spring-recipes" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-spring">🌸 Spring</div>
+      <h1 class="page-title">Spring Recipes</h1>
+      <p class="page-subtitle">Click any recipe to view full details</p>
+    </div>
+
+    <div id="spring-recipe-detail" class="recipe-detail">
+      <button class="close-recipe" onclick="closeRecipeDetail('spring')">← Back to recipes</button>
+      <div id="spring-recipe-content"></div>
+    </div>
+
+    <div id="spring-recipe-list">
+      <div class="section">
+        <div class="section-title">Breakfast</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('spring', 'golden-egg-pan')">
+            <div class="recipe-card-title">Golden Egg Pan</div>
+            <div class="recipe-meta"><span>⏱ 15 min</span><span>👤 2 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">eggs</span><span class="recipe-tag">courgette</span><span class="recipe-tag">Swiss chard</span><span class="recipe-tag">low-carb</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'superfood-omelet')">
+            <div class="recipe-card-title">Superfood Omelet (2 Ways)</div>
+            <div class="recipe-meta"><span>⏱ 15 min</span><span>👤 1 serving</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">eggs</span><span class="recipe-tag">Greek-style</span><span class="recipe-tag">Turkish-style</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'greek-power-bowl')">
+            <div class="recipe-card-title">Greek Breakfast Power Bowl</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 2 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">halloumi</span><span class="recipe-tag">eggs</span><span class="recipe-tag">aubergine</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'sausage-avo-egg')">
+            <div class="recipe-card-title">Sausage-Avo-Egg Stack</div>
+            <div class="recipe-meta"><span>⏱ 15 min</span><span>👤 1 serving</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">pork</span><span class="recipe-tag">avocado</span><span class="recipe-tag">eggs</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'superfood-shakshuka')">
+            <div class="recipe-card-title">Superfood Shakshuka</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 2 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">eggs</span><span class="recipe-tag">tomatoes</span><span class="recipe-tag">courgette</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'spanish-scramble')">
+            <div class="recipe-card-title">Spanish Scramble</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 2 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">eggs</span><span class="recipe-tag">chorizo</span><span class="recipe-tag">chard</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Lunch & Dinner</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('spring', 'crispy-salmon-piccata')">
+            <div class="recipe-card-title">Crispy Salmon Piccata</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">salmon</span><span class="recipe-tag">capers</span><span class="recipe-tag">lemon</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'charred-prawns')">
+            <div class="recipe-card-title">Charred Prawns, Cannellini Beans + Fennel</div>
+            <div class="recipe-meta"><span>⏱ 15 min</span><span>👤 4 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">prawns</span><span class="recipe-tag">fennel</span><span class="recipe-tag">salsa verde</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'green-goddess-salad')">
+            <div class="recipe-card-title">Green Goddess Salad</div>
+            <div class="recipe-meta"><span>⏱ 10 min</span><span>👤 2–4 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">salad</span><span class="recipe-tag">herbs</span><span class="recipe-tag">eggs</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'steak-salad')">
+            <div class="recipe-card-title">Steak Salad Bowl with Asparagus + Gremolata</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 2 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">asparagus</span><span class="recipe-tag">avocado</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'salmon-brain-bowl')">
+            <div class="recipe-card-title">Five-Superfood Salmon Brain Bowl</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 2 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">salmon</span><span class="recipe-tag">avocado</span><span class="recipe-tag">fennel</span><span class="recipe-tag">eggs</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'turkey-meatballs')">
+            <div class="recipe-card-title">Turkey Meatballs with Salsa Verde</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">turkey</span><span class="recipe-tag">salsa verde</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'salmon-crepes')">
+            <div class="recipe-card-title">Green Spinach & Salmon Crepes</div>
+            <div class="recipe-meta"><span>⏱ 15 min</span><span>👤 1 serving</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">salmon</span><span class="recipe-tag">spinach</span><span class="recipe-tag">avocado</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'sardine-patties')">
+            <div class="recipe-card-title">Sardine Patties + Olive Tapenade</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 3 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">sardines</span><span class="recipe-tag">olives</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Sauces, Bases & Extras</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('spring', 'salsa-verde')">
+            <div class="recipe-card-title">Salsa Verde</div>
+            <div class="recipe-meta"><span>⏱ 10 min</span><span>🫙 Small jar</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">herbs</span><span class="recipe-tag">anchovies</span><span class="recipe-tag">capers</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'chicken-liver-pate')">
+            <div class="recipe-card-title">A+ Chicken Liver Pâté</div>
+            <div class="recipe-meta"><span>⏱ 30 min</span><span>🫙 10 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">liver</span><span class="recipe-tag">snack</span><span class="recipe-tag">batch</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'superseded-crackers')">
+            <div class="recipe-card-title">Superseded Crackers (2 Ways)</div>
+            <div class="recipe-meta"><span>⏱ 90 min</span><span>🫙 24 crackers</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">seeds</span><span class="recipe-tag">snack</span><span class="recipe-tag">batch</span></div>
+          </div>
+          <div class="recipe-card" onclick="showRecipe('spring', 'supergreen-tabbouleh')">
+            <div class="recipe-card-title">Supergreen Tabbouleh</div>
+            <div class="recipe-meta"><span>⏱ 20 min</span><span>👤 8 servings</span></div>
+            <div class="recipe-tags"><span class="recipe-tag">broccoli</span><span class="recipe-tag">herbs</span><span class="recipe-tag">batch</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== SUMMER ========== -->
+
+  <div id="page-summer-menu" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-summer">☀️ Summer</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <h1 class="page-title">Weekly Menu</h1>
+          <p class="page-subtitle">June · July · August — courgettes, tomatoes, peppers, aubergine, fresh basil</p>
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+
+    <div class="protein-bar">
+      <div class="protein-stat"><div class="protein-number">180g+</div><div class="protein-label">Protein daily</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">60g</div><div class="protein-label">Per meal</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">30+</div><div class="protein-label">Veg varieties/week</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Summer Week Overview</div>
+      <table class="menu-table">
+        <thead>
+          <tr><th>Day</th><th>Breakfast 5 AM</th><th>Lunch 11:30 AM</th><th>Dinner 2 PM</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Monday</strong></td><td><div class="meal-name">Superfood Shakshuka <span class="protein-tag tag-summer">~30g</span></div><div class="meal-note">+ avocado, bone broth</div></td><td><div class="meal-name">Taverna-Style Greek Salad <span class="protein-tag tag-summer">~25g</span></div><div class="meal-note">+ grilled chicken</div></td><td><div class="meal-name">Salmon Ratatouille Pan <span class="protein-tag tag-summer">~45g</span></div></td></tr>
+          <tr><td><strong>Tuesday</strong></td><td><div class="meal-name">Spanish Scramble <span class="protein-tag tag-summer">~35g</span></div><div class="meal-note">+ fermented foods</div></td><td><div class="meal-name">Superfood Salmon Salad Bowl <span class="protein-tag tag-summer">~42g</span></div></td><td><div class="meal-name">Coconut Shrimp Pan + courgette noodles <span class="protein-tag tag-summer">~38g</span></div></td></tr>
+          <tr><td><strong>Wednesday</strong></td><td><div class="meal-name">Golden Egg Pan <span class="protein-tag tag-summer">~30g</span></div><div class="meal-note">+ bone broth, leafy greens</div></td><td><div class="meal-name">Italian "A2" Power Bowls <span class="protein-tag tag-summer">~50g</span></div></td><td><div class="meal-name">Pancetta-Wrapped Sea Bass Sheet Pan <span class="protein-tag tag-summer">~45g</span></div></td></tr>
+          <tr><td><strong>Thursday</strong></td><td><div class="meal-name">Superfood Omelet, Turkish-style <span class="protein-tag tag-summer">~28g</span></div><div class="meal-note">+ fermented foods</div></td><td><div class="meal-name">Citrus Prawn Ceviche Tostadas <span class="protein-tag tag-summer">~35g</span></div></td><td><div class="meal-name">Crispy Salmon Piccata <span class="protein-tag tag-summer">~45g</span></div></td></tr>
+          <tr><td><strong>Friday</strong></td><td><div class="meal-name">Greek Breakfast Power Bowl <span class="protein-tag tag-summer">~35g</span></div></td><td><div class="meal-name">Upgraded Shrimp Cocktail Salad <span class="protein-tag tag-summer">~35g</span></div></td><td><div class="meal-name">Chile-Lime Mackerel + Coriander Slaw <span class="protein-tag tag-summer">~38g</span></div></td></tr>
+          <tr><td><strong>Saturday</strong></td><td><div class="meal-name">Frittata Muffins, Spinach Pesto <span class="protein-tag tag-summer">~40g</span></div><div class="meal-note">Batch cook day</div></td><td><div class="meal-name">Oregano Halloumi, Tomatoes + Mint Yoghurt <span class="protein-tag tag-summer">~35g</span></div></td><td><div class="meal-name">Roast Chicken (Harissa + Coriander Butter) <span class="protein-tag tag-summer">~55g</span></div></td></tr>
+          <tr><td><strong>Sunday</strong></td><td><div class="meal-name">Sausage-Avo-Egg Stack <span class="protein-tag tag-summer">~35g</span></div></td><td><div class="meal-name">Green Goddess Salad + sardines <span class="protein-tag tag-summer">~38g</span></div></td><td><div class="meal-name">Garlic Beef and Broccoli <span class="protein-tag tag-summer">~50g</span></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Summer Vegetables (30+ weekly)</div>
+      <div class="veg-grid">
+        <span class="veg-pill">Courgettes</span><span class="veg-pill">Aubergine</span><span class="veg-pill">Tomatoes</span><span class="veg-pill">Cherry tomatoes</span><span class="veg-pill">Red peppers</span><span class="veg-pill">Sweetcorn</span><span class="veg-pill">Cucumber</span><span class="veg-pill">Basil</span><span class="veg-pill">Rocket</span><span class="veg-pill">Spinach</span><span class="veg-pill">Watercress</span><span class="veg-pill">Avocado</span><span class="veg-pill">Fennel</span><span class="veg-pill">Radishes</span><span class="veg-pill">Spring onions</span><span class="veg-pill">Red onion</span><span class="veg-pill">Garlic</span><span class="veg-pill">Green beans</span><span class="veg-pill">Sugar snap peas</span><span class="veg-pill">Celery</span><span class="veg-pill">Shallots</span><span class="veg-pill">Grapefruit</span><span class="veg-pill">Lemon</span><span class="veg-pill">Lime</span><span class="veg-pill">Mint</span><span class="veg-pill">Parsley</span><span class="veg-pill">Coriander</span><span class="veg-pill">Dill</span><span class="veg-pill">Broccoli</span><span class="veg-pill">Swiss chard</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-summer-shopping" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-summer">☀️ Summer</div>
+      <h1 class="page-title">Weekly Shopping List</h1>
+      <p class="page-subtitle">Click items to check off as you shop</p>
+    </div>
+    <div class="callout callout-warm"><span class="callout-icon">☀️</span> In summer, buy tomatoes and stone fruit at peak ripeness from farmers' market. Fish choices: sea bass, sea bream, mackerel, prawns at their best.</div>
+    <div class="section">
+      <div class="section-title">Saturday Main Shop</div>
+      <div class="shopping-grid">
+        <div class="shopping-category">
+          <h4>🐟 Proteins</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Wild salmon (4 fillets)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Sea bass fillets (4 × 150g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Whole chicken (1.6kg)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Raw king prawns (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Mackerel fillets (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Pancetta slices (140g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Beef steaks (400g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Eggs (18+)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Chicken sausages/chorizo</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🥬 Produce</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Courgettes (6 large)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Aubergines (2)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cherry tomatoes (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Large ripe tomatoes (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Red peppers (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cucumbers (2)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Avocados (6–8)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Spinach fresh (400g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Rocket (2 bags)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Swiss chard (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Radishes (1 bunch)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fennel (1 bulb)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Broccoli (2 heads)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🌿 Herbs & Aromatics</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Basil (2 pots or bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Parsley (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coriander (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Mint (1 bunch)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Dill (1 bunch)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Garlic (2 bulbs)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Red onions (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Spring onions (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ginger (fresh, 100g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Limes (8)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Lemons (6)</div>
+          <h4 style="margin-top:1rem;">🫙 Pantry</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned tomatoes (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coconut milk (tin)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coconut cream (tin)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Buffalo mozzarella (2 balls)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Halloumi (250g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Macadamia basil pesto (jar)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-summer-batch" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-summer">☀️ Summer</div>
+      <h1 class="page-title">Batch Cooking Plan</h1>
+      <p class="page-subtitle">Saturday morning (3–4 hours) + Wednesday top-up (45 min)</p>
+    </div>
+    <div class="callout callout-warm"><span class="callout-icon">☀️</span> Summer batch cooking is lighter — focus on fresh salsa bases, cold poached proteins, and big salad components that hold well.</div>
+    <div class="section">
+      <div class="section-title">Saturday: 7 AM – 11 AM</div>
+      <div class="batch-timeline">
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">7:00</div><div class="batch-time-label">Start</div></div>
+          <div class="batch-content"><div class="batch-title">Set up + quick proteins</div><ul class="batch-tasks"><li>Hard-boil 8 eggs (9 min)</li><li>Put roast chicken in oven (harissa butter rub)</li><li>Bake Frittata Muffins (spinach pesto)</li></ul></div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">7:45</div><div class="batch-time-label">Sauces</div></div>
+          <div class="batch-content"><div class="batch-title">Summer sauces and bases</div><ul class="batch-tasks"><li>Make Macadamia Basil Pesto (or Lemon & Basil Pesto)</li><li>Make Salsa Verde</li><li>Make Basil Oil</li><li>Make Fennel Tzatziki</li></ul></div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">8:30</div><div class="batch-time-label">Veg prep</div></div>
+          <div class="batch-content"><div class="batch-title">Summer vegetable prep</div><ul class="batch-tasks"><li>Roast trays of courgette, aubergine, peppers</li><li>Spiralize courgettes for noodles — store dry</li><li>Wash and prep all salad greens</li><li>Make a large batch of Supergreen Tabbouleh base</li></ul></div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">9:30</div><div class="batch-time-label">Proteins</div></div>
+          <div class="batch-content"><div class="batch-title">Additional proteins</div><ul class="batch-tasks"><li>Poach salmon (for cold salad use midweek)</li><li>Marinate mackerel for tomorrow</li><li>Portion chicken once rested</li></ul></div>
+        </div>
+        <div class="batch-block">
+          <div class="batch-time"><div class="batch-time-main">10:30</div><div class="batch-time-label">Store</div></div>
+          <div class="batch-content"><div class="batch-title">Label and store</div><ul class="batch-tasks"><li>All items labelled with date</li><li>Bone broth strained and stored</li><li>Dressings in small jars</li></ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-summer-recipes" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-summer">☀️ Summer</div>
+      <h1 class="page-title">Summer Recipes</h1>
+      <p class="page-subtitle">Click any recipe to view full details</p>
+    </div>
+    <div id="summer-recipe-detail" class="recipe-detail">
+      <button class="close-recipe" onclick="closeRecipeDetail('summer')">← Back to recipes</button>
+      <div id="summer-recipe-content"></div>
+    </div>
+    <div id="summer-recipe-list">
+      <div class="section">
+        <div class="section-title">Main Dishes</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('summer', 'salmon-ratatouille')"><div class="recipe-card-title">Salmon Ratatouille Pan</div><div class="recipe-meta"><span>⏱ 40 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">salmon</span><span class="recipe-tag">aubergine</span><span class="recipe-tag">tomatoes</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'coconut-shrimp')"><div class="recipe-card-title">Coconut Shrimp Pan</div><div class="recipe-meta"><span>⏱ 15 min</span><span>👤 2 servings</span></div><div class="recipe-tags"><span class="recipe-tag">shrimp</span><span class="recipe-tag">coconut</span><span class="recipe-tag">courgette</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'pancetta-sea-bass')"><div class="recipe-card-title">Pancetta-Wrapped Sea Bass Sheet Pan</div><div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">sea bass</span><span class="recipe-tag">pancetta</span><span class="recipe-tag">mozzarella</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'garlic-beef-broccoli')"><div class="recipe-card-title">Garlic Beef and Broccoli</div><div class="recipe-meta"><span>⏱ 30 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">broccoli</span><span class="recipe-tag">coconut aminos</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'oregano-halloumi')"><div class="recipe-card-title">Oregano Halloumi, Tomatoes + Mint Yoghurt</div><div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">halloumi</span><span class="recipe-tag">tomatoes</span><span class="recipe-tag">herbs</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'italian-power-bowls')"><div class="recipe-card-title">Italian "A2" Power Bowls</div><div class="recipe-meta"><span>⏱ 1 hr</span><span>👤 2 servings</span></div><div class="recipe-tags"><span class="recipe-tag">chicken</span><span class="recipe-tag">courgette</span><span class="recipe-tag">pesto</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Sauces & Condiments</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('summer', 'basil-oil')"><div class="recipe-card-title">Basil Oil</div><div class="recipe-meta"><span>⏱ 5 min</span><span>🫙 Small jar</span></div><div class="recipe-tags"><span class="recipe-tag">basil</span><span class="recipe-tag">dressing</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'lemon-basil-pesto')"><div class="recipe-card-title">Lemon and Basil Pesto</div><div class="recipe-meta"><span>⏱ 10 min</span><span>🫙 Small jar</span></div><div class="recipe-tags"><span class="recipe-tag">basil</span><span class="recipe-tag">pine nuts</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'fennel-tzatziki')"><div class="recipe-card-title">Fennel Tzatziki</div><div class="recipe-meta"><span>⏱ 10 min</span><span>👤 6 servings</span></div><div class="recipe-tags"><span class="recipe-tag">goat yoghurt</span><span class="recipe-tag">cucumber</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('summer', 'anchovy-roast-peppers')"><div class="recipe-card-title">Anchovy Roast Peppers</div><div class="recipe-meta"><span>⏱ 40 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">peppers</span><span class="recipe-tag">anchovies</span><span class="recipe-tag">beans</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== AUTUMN ========== -->
+
+  <div id="page-autumn-menu" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-autumn">🍂 Autumn</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <h1 class="page-title">Weekly Menu</h1>
+          <p class="page-subtitle">September · October · November — squash, beetroot, mushrooms, fennel, kale</p>
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+    <div class="protein-bar">
+      <div class="protein-stat"><div class="protein-number">180g+</div><div class="protein-label">Protein daily</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">60g</div><div class="protein-label">Per meal</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">30+</div><div class="protein-label">Veg varieties/week</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Autumn Week Overview</div>
+      <table class="menu-table">
+        <thead><tr><th>Day</th><th>Breakfast 5 AM</th><th>Lunch 11:30 AM</th><th>Dinner 2 PM</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Monday</strong></td><td><div class="meal-name">Golden Egg Pan <span class="protein-tag tag-autumn">~30g</span></div><div class="meal-note">+ kale, bone broth</div></td><td><div class="meal-name">Moroccan Power Bowls <span class="protein-tag tag-autumn">~50g</span></div></td><td><div class="meal-name">Citrus-Thyme Pot Roast <span class="protein-tag tag-autumn">~55g</span></div></td></tr>
+          <tr><td><strong>Tuesday</strong></td><td><div class="meal-name">Superfood Shakshuka <span class="protein-tag tag-autumn">~30g</span></div><div class="meal-note">+ fermented foods</div></td><td><div class="meal-name">Thyroid-Friendly Salmon Fish Cakes <span class="protein-tag tag-autumn">~40g</span></div></td><td><div class="meal-name">Rosemary Shredded Beef Pan <span class="protein-tag tag-autumn">~45g</span></div></td></tr>
+          <tr><td><strong>Wednesday</strong></td><td><div class="meal-name">Greek Breakfast Power Bowl <span class="protein-tag tag-autumn">~35g</span></div></td><td><div class="meal-name">Deviled Mackerel + Fennel Slaw <span class="protein-tag tag-autumn">~38g</span></div></td><td><div class="meal-name">Portobello Burger + Three-Herb Beef Patties <span class="protein-tag tag-autumn">~50g</span></div></td></tr>
+          <tr><td><strong>Thursday</strong></td><td><div class="meal-name">Sausage-Avo-Egg Stack <span class="protein-tag tag-autumn">~35g</span></div></td><td><div class="meal-name">Five-Superfood Salmon Brain Bowl <span class="protein-tag tag-autumn">~45g</span></div></td><td><div class="meal-name">Shrimp Scampi (courgette noodles) <span class="protein-tag tag-autumn">~42g</span></div></td></tr>
+          <tr><td><strong>Friday</strong></td><td><div class="meal-name">Spanish Scramble <span class="protein-tag tag-autumn">~35g</span></div></td><td><div class="meal-name">Unwich Tuna Niçoise <span class="protein-tag tag-autumn">~40g</span></div></td><td><div class="meal-name">Herb-Stuffed Trout <span class="protein-tag tag-autumn">~50g</span></div></td></tr>
+          <tr><td><strong>Saturday</strong></td><td><div class="meal-name">Frittata Muffins, Cheesy Broccoli <span class="protein-tag tag-autumn">~35g</span></div><div class="meal-note">Batch cook day</div></td><td><div class="meal-name">Pickled Rhubarb + Sesame Beetroot salad <span class="protein-tag tag-autumn">~25g</span></div></td><td><div class="meal-name">Roast Chicken (Ginger, Turmeric + Yoghurt) <span class="protein-tag tag-autumn">~55g</span></div></td></tr>
+          <tr><td><strong>Sunday</strong></td><td><div class="meal-name">Superfood Omelet, Turkish-style <span class="protein-tag tag-autumn">~28g</span></div></td><td><div class="meal-name">Steak Salad Bowl with seasonal veg <span class="protein-tag tag-autumn">~50g</span></div></td><td><div class="meal-name">Salmon Chowder <span class="protein-tag tag-autumn">~45g</span></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <div class="section-title">Autumn Vegetables (30+ weekly)</div>
+      <div class="veg-grid">
+        <span class="veg-pill">Butternut squash</span><span class="veg-pill">Coquina squash</span><span class="veg-pill">Beetroot</span><span class="veg-pill">Mushrooms (various)</span><span class="veg-pill">Fennel</span><span class="veg-pill">Kale</span><span class="veg-pill">Cavolo nero</span><span class="veg-pill">Swiss chard</span><span class="veg-pill">Brussels sprouts</span><span class="veg-pill">Broccoli</span><span class="veg-pill">Cauliflower</span><span class="veg-pill">Courgette</span><span class="veg-pill">Aubergine</span><span class="veg-pill">Sweet potato</span><span class="veg-pill">Parsnip</span><span class="veg-pill">Carrot</span><span class="veg-pill">Celery</span><span class="veg-pill">Red cabbage</span><span class="veg-pill">Savoy cabbage</span><span class="veg-pill">Spinach</span><span class="veg-pill">Rocket</span><span class="veg-pill">Watercress</span><span class="veg-pill">Radicchio</span><span class="veg-pill">Red pepper</span><span class="veg-pill">Leek</span><span class="veg-pill">Onion</span><span class="veg-pill">Red onion</span><span class="veg-pill">Spring onions</span><span class="veg-pill">Garlic</span><span class="veg-pill">Ginger</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-autumn-shopping" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-autumn">🍂 Autumn</div>
+      <h1 class="page-title">Weekly Shopping List</h1>
+      <p class="page-subtitle">Click items to check off as you shop</p>
+    </div>
+    <div class="callout callout-tip"><span class="callout-icon">🍂</span> Autumn calls for slow-cooking cuts, root vegetables, and warming spices. Stock up on mushroom varieties — shiitake, portobello, wild mixed.</div>
+    <div class="section">
+      <div class="section-title">Saturday Main Shop</div>
+      <div class="shopping-grid">
+        <div class="shopping-category">
+          <h4>🥩 Proteins</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Beef roast (1–1.5kg grass-fed)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground beef (900g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground lamb (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Whole chicken (1.6kg)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Salmon fillets (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned salmon (340g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Mackerel fillets (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Whole trout (2)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Raw shrimp/prawns (680g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned tuna</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Eggs (18+)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🥬 Autumn Produce</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Butternut squash (1 large)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Beetroot (6, mixed)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Portobello mushrooms (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Wild mushrooms (400g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fennel (2 bulbs)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Kale (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Swiss chard (2 bunches)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Sweet potatoes (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Parsnips (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Carrots (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Courgettes (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Red peppers (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Broccoli (2 heads)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Rocket + spinach (bags)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cauliflower (1 head)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🫙 Pantry & Spices</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Bone broth (or chicken carcass)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned tomatoes (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coconut milk (2 tins)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Macadamia nuts (200g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Harissa spice mix</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground cumin, coriander, turmeric</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Smoked paprika</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fresh rosemary + thyme</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Goat/sheep milk yoghurt</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Avocados (6)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Flax meal</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Collagen powder</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ghee (large jar)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-autumn-batch" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-autumn">🍂 Autumn</div>
+      <h1 class="page-title">Batch Cooking Plan</h1>
+      <p class="page-subtitle">Saturday morning (3–4 hours) + Wednesday top-up (45 min)</p>
+    </div>
+    <div class="callout callout-tip"><span class="callout-icon">🍂</span> Autumn is slow-cooking season. The oven works hardest now — roasts, braises, and root vegetable trays all go in together.</div>
+    <div class="section">
+      <div class="section-title">Saturday: 7 AM – 11 AM</div>
+      <div class="batch-timeline">
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">7:00</div><div class="batch-time-label">Start</div></div><div class="batch-content"><div class="batch-title">Slow oven + broth</div><ul class="batch-tasks"><li>Start Citrus-Thyme Pot Roast in heavy pot (2–3 hours low oven)</li><li>Put chicken in oven (ginger-turmeric-yoghurt rub)</li><li>Start bone broth on hob</li><li>Hard-boil 8 eggs</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">7:30</div><div class="batch-time-label">Roasting</div></div><div class="batch-content"><div class="batch-title">Root veg roasting trays</div><ul class="batch-tasks"><li>Roast beets (whole in foil, 45 min)</li><li>Roast sweet potatoes and parsnips (cubed with ghee and rosemary)</li><li>Roast butternut squash wedges with cumin and five-spice</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">8:30</div><div class="batch-time-label">Prep</div></div><div class="batch-content"><div class="batch-title">Sauces and protein mixtures</div><ul class="batch-tasks"><li>Make Moroccan spice cauli-rice (grate and sauté cauliflower)</li><li>Make lamb meatball mixture — shape and refrigerate</li><li>Make beef patty mixture — shape and refrigerate</li><li>Bake Frittata Muffins (cheesy broccoli filling)</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">9:30</div><div class="batch-time-label">Greens</div></div><div class="batch-content"><div class="batch-title">Greens and sauces</div><ul class="batch-tasks"><li>Sauté large batch kale in coconut oil — store</li><li>Wash and prep all salad greens</li><li>Make Chicken Liver Pâté batch</li><li>Make Dukkah spice mix</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">10:30</div><div class="batch-time-label">Finish</div></div><div class="batch-content"><div class="batch-title">Store and label</div><ul class="batch-tasks"><li>Shred beef and portion — store in broth</li><li>Portion roasted chicken</li><li>Strain and store bone broth</li><li>Label everything with date</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-autumn-recipes" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-autumn">🍂 Autumn</div>
+      <h1 class="page-title">Autumn Recipes</h1>
+      <p class="page-subtitle">Click any recipe to view full details</p>
+    </div>
+    <div id="autumn-recipe-detail" class="recipe-detail">
+      <button class="close-recipe" onclick="closeRecipeDetail('autumn')">← Back to recipes</button>
+      <div id="autumn-recipe-content"></div>
+    </div>
+    <div id="autumn-recipe-list">
+      <div class="section">
+        <div class="section-title">Mains</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('autumn', 'citrus-pot-roast')"><div class="recipe-card-title">Citrus-Thyme Pot Roast</div><div class="recipe-meta"><span>⏱ 2–3 hrs</span><span>👤 6 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">bone broth</span><span class="recipe-tag">batch</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'moroccan-bowls')"><div class="recipe-card-title">Moroccan Power Bowls</div><div class="recipe-meta"><span>⏱ 40 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">lamb</span><span class="recipe-tag">cauliflower</span><span class="recipe-tag">harissa</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'rosemary-beef-pan')"><div class="recipe-card-title">Rosemary Shredded Beef Pan</div><div class="recipe-meta"><span>⏱ 45 min</span><span>👤 3–4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">sweet potato</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'herb-stuffed-trout')"><div class="recipe-card-title">Herb-Stuffed Trout</div><div class="recipe-meta"><span>⏱ 30 min</span><span>👤 2 servings</span></div><div class="recipe-tags"><span class="recipe-tag">trout</span><span class="recipe-tag">rosemary</span><span class="recipe-tag">thyme</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'deviled-mackerel')"><div class="recipe-card-title">Deviled Mackerel + Fennel Slaw</div><div class="recipe-meta"><span>⏱ 1 hr</span><span>👤 2 servings</span></div><div class="recipe-tags"><span class="recipe-tag">mackerel</span><span class="recipe-tag">fennel</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'portobello-burger')"><div class="recipe-card-title">Portobello "Burger"</div><div class="recipe-meta"><span>⏱ 30 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">mushroom</span><span class="recipe-tag">avocado</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'salmon-chowder')"><div class="recipe-card-title">Salmon Chowder</div><div class="recipe-meta"><span>⏱ 2 hrs</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">salmon</span><span class="recipe-tag">coconut</span><span class="recipe-tag">broth</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'shrimp-scampi')"><div class="recipe-card-title">Shrimp Scampi</div><div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">shrimp</span><span class="recipe-tag">garlic</span><span class="recipe-tag">courgette noodles</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Salads & Sides</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('autumn', 'kale-apple-slaw')"><div class="recipe-card-title">Kale, Apple + Tarragon Slaw</div><div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">kale</span><span class="recipe-tag">apple</span><span class="recipe-tag">fennel</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'sticky-beetroot')"><div class="recipe-card-title">Sticky Pomegranate Beetroot</div><div class="recipe-meta"><span>⏱ 25 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beetroot</span><span class="recipe-tag">pomegranate</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('autumn', 'dukkah')"><div class="recipe-card-title">Dukkah</div><div class="recipe-meta"><span>⏱ 10 min</span><span>🫙 Small jar</span></div><div class="recipe-tags"><span class="recipe-tag">spice mix</span><span class="recipe-tag">batch</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== WINTER ========== -->
+
+  <div id="page-winter-menu" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-winter">❄️ Winter</div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <h1 class="page-title">Weekly Menu</h1>
+          <p class="page-subtitle">December · January · February — root veg, citrus, cauliflower, Brussels sprouts</p>
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+    <div class="protein-bar">
+      <div class="protein-stat"><div class="protein-number">180g+</div><div class="protein-label">Protein daily</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">60g</div><div class="protein-label">Per meal</div></div>
+      <div class="protein-divider"></div>
+      <div class="protein-stat"><div class="protein-number">30+</div><div class="protein-label">Veg varieties/week</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Winter Week Overview</div>
+      <table class="menu-table">
+        <thead><tr><th>Day</th><th>Breakfast 5 AM</th><th>Lunch 11:30 AM</th><th>Dinner 2 PM</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Monday</strong></td><td><div class="meal-name">Golden Egg Pan <span class="protein-tag tag-winter">~30g</span></div><div class="meal-note">+ collard greens, bone broth</div></td><td><div class="meal-name">Moroccan Power Bowls (cauliflower rice) <span class="protein-tag tag-winter">~50g</span></div></td><td><div class="meal-name">Citrus-Thyme Pot Roast <span class="protein-tag tag-winter">~55g</span></div></td></tr>
+          <tr><td><strong>Tuesday</strong></td><td><div class="meal-name">Superfood Shakshuka <span class="protein-tag tag-winter">~30g</span></div><div class="meal-note">+ avocado, fermented foods</div></td><td><div class="meal-name">Garlic Beef and Broccoli <span class="protein-tag tag-winter">~50g</span></div></td><td><div class="meal-name">Salmon Chowder <span class="protein-tag tag-winter">~45g</span></div></td></tr>
+          <tr><td><strong>Wednesday</strong></td><td><div class="meal-name">Superfood Omelet, Turkish-style <span class="protein-tag tag-winter">~28g</span></div></td><td><div class="meal-name">Chile-Lime Mackerel + Coriander Slaw <span class="protein-tag tag-winter">~38g</span></div></td><td><div class="meal-name">Shrimp and Green Bean Stir-Fry <span class="protein-tag tag-winter">~42g</span></div></td></tr>
+          <tr><td><strong>Thursday</strong></td><td><div class="meal-name">Greek Breakfast Power Bowl <span class="protein-tag tag-winter">~35g</span></div></td><td><div class="meal-name">Thyroid-Friendly Salmon Fish Cakes <span class="protein-tag tag-winter">~40g</span></div></td><td><div class="meal-name">Spicy Cod & Veg Sheet Pan <span class="protein-tag tag-winter">~45g</span></div></td></tr>
+          <tr><td><strong>Friday</strong></td><td><div class="meal-name">Sausage-Avo-Egg Stack <span class="protein-tag tag-winter">~35g</span></div></td><td><div class="meal-name">Unwich Tuna Niçoise <span class="protein-tag tag-winter">~40g</span></div></td><td><div class="meal-name">Herb-Stuffed Trout <span class="protein-tag tag-winter">~50g</span></div></td></tr>
+          <tr><td><strong>Saturday</strong></td><td><div class="meal-name">Frittata Muffins, Cheesy Broccoli <span class="protein-tag tag-winter">~35g</span></div><div class="meal-note">Batch cook day</div></td><td><div class="meal-name">Roast Brussels Sprouts on Barley + protein <span class="protein-tag tag-winter">~40g</span></div></td><td><div class="meal-name">Roast Chicken (Harissa + Coriander Butter) <span class="protein-tag tag-winter">~55g</span></div></td></tr>
+          <tr><td><strong>Sunday</strong></td><td><div class="meal-name">Spanish Scramble <span class="protein-tag tag-winter">~35g</span></div></td><td><div class="meal-name">Sear-Roasted Halibut <span class="protein-tag tag-winter">~50g</span></div></td><td><div class="meal-name">Rosemary Shredded Beef Pan <span class="protein-tag tag-winter">~45g</span></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section">
+      <div class="section-title">Winter Vegetables (30+ weekly)</div>
+      <div class="veg-grid">
+        <span class="veg-pill">Brussels sprouts</span><span class="veg-pill">Celeriac</span><span class="veg-pill">Parsnip</span><span class="veg-pill">Swede</span><span class="veg-pill">Cauliflower</span><span class="veg-pill">Cavolo nero</span><span class="veg-pill">Kale</span><span class="veg-pill">Swiss chard</span><span class="veg-pill">Collard greens</span><span class="veg-pill">Leek</span><span class="veg-pill">Onion</span><span class="veg-pill">Shallots</span><span class="veg-pill">Celery</span><span class="veg-pill">Carrot</span><span class="veg-pill">Broccoli</span><span class="veg-pill">Red cabbage</span><span class="veg-pill">Green beans</span><span class="veg-pill">Courgette</span><span class="veg-pill">Fennel</span><span class="veg-pill">Beetroot</span><span class="veg-pill">Canned tomatoes</span><span class="veg-pill">Garlic</span><span class="veg-pill">Ginger</span><span class="veg-pill">Spinach (frozen)</span><span class="veg-pill">Mushrooms</span><span class="veg-pill">Avocado</span><span class="veg-pill">Rocket</span><span class="veg-pill">Watercress</span><span class="veg-pill">Blood orange</span><span class="veg-pill">Lemon</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-winter-shopping" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-winter">❄️ Winter</div>
+      <h1 class="page-title">Weekly Shopping List</h1>
+      <p class="page-subtitle">Click items to check off as you shop</p>
+    </div>
+    <div class="callout callout-info"><span class="callout-icon">❄️</span> Winter shopping leans on long-lasting root veg, frozen proteins, and pantry staples. Citrus fruits are at their peak — stock up on blood oranges and lemons.</div>
+    <div class="section">
+      <div class="section-title">Saturday Main Shop</div>
+      <div class="shopping-grid">
+        <div class="shopping-category">
+          <h4>🥩 Proteins</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Beef roast (1.5kg grass-fed)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground beef (900g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Whole chicken (1.6kg)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Salmon fillets (4–6)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cod fillets (600g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Halibut (340g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Whole trout (2)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Raw shrimp (900g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Mackerel fillets (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned tuna</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Eggs (18+)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ground pork (500g)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🥬 Winter Produce</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Brussels sprouts (450g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Cauliflower (2 heads)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Broccoli (2 heads)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Kale (300g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Swiss chard / collard greens</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Leeks (3)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Parsnips (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Carrots (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Celery (1 head)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Onions (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Red onions (2)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Mushrooms (300g mixed)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Avocados (6)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Blood oranges / regular oranges</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Lemons (8)</div>
+        </div>
+        <div class="shopping-category">
+          <h4>🫙 Pantry</h4>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Bone broth (2L or carcass)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Canned tomatoes (4)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coconut milk (3 tins)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Coconut aminos</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Apple cider vinegar</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Ghee (large jar)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Frozen spinach (500g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Green beans (frozen, 900g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Sesame oil</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Fresh ginger (100g)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Garlic (3 bulbs)</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Collagen powder</div>
+          <div class="shopping-item"><span class="check-box" onclick="toggleCheck(this)"></span>Creatine</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-winter-batch" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-winter">❄️ Winter</div>
+      <h1 class="page-title">Batch Cooking Plan</h1>
+      <p class="page-subtitle">Saturday morning (3–4 hours) + Wednesday top-up (45 min)</p>
+    </div>
+    <div class="callout callout-info"><span class="callout-icon">❄️</span> Winter batch cooking is all about deep, slow warmth. The oven runs for hours with braises and roasts, while the hob simmers broths and stews.</div>
+    <div class="section">
+      <div class="section-title">Saturday: 7 AM – 11 AM</div>
+      <div class="batch-timeline">
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">7:00</div><div class="batch-time-label">Start</div></div><div class="batch-content"><div class="batch-title">Broth + slow oven</div><ul class="batch-tasks"><li>Start bone broth (if making from carcass) — simmer 2+ hours</li><li>Begin Citrus-Thyme Pot Roast or beef braise (300°F / 150°C)</li><li>Hard-boil 8 eggs</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">7:30</div><div class="batch-time-label">Oven</div></div><div class="batch-content"><div class="batch-title">Roasted veg trays</div><ul class="batch-tasks"><li>Roast Brussels sprouts with cumin and olive oil (200°C, 25–30 min)</li><li>Roast broccoli and cauliflower in sesame + coconut aminos</li><li>Roast chicken (harissa butter) — 65 min</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">8:30</div><div class="batch-time-label">Prep</div></div><div class="batch-content"><div class="batch-title">Cauliflower rice + sauces</div><ul class="batch-tasks"><li>Grate cauliflower, sauté with turmeric and cumin — store</li><li>Make Chicken Liver Pâté</li><li>Make Golden Mayo or Green Goddess Dressing</li><li>Bake Frittata Muffins</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">9:30</div><div class="batch-time-label">Greens</div></div><div class="batch-content"><div class="batch-title">Greens and protein prep</div><ul class="batch-tasks"><li>Sauté kale and collard greens in coconut oil — store</li><li>Wash all salad greens — store lined with paper towel</li><li>Marinate mackerel or fish for next few days</li></ul></div></div>
+        <div class="batch-block"><div class="batch-time"><div class="batch-time-main">10:30</div><div class="batch-time-label">Store</div></div><div class="batch-content"><div class="batch-title">Strain, label, refrigerate</div><ul class="batch-tasks"><li>Strain and season bone broth — portion into jars (freeze extra)</li><li>Shred beef — keep in braising juices</li><li>Label everything clearly with date</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-winter-recipes" class="page-section">
+    <div class="page-header">
+      <div class="season-badge badge-winter">❄️ Winter</div>
+      <h1 class="page-title">Winter Recipes</h1>
+      <p class="page-subtitle">Click any recipe to view full details</p>
+    </div>
+    <div id="winter-recipe-detail" class="recipe-detail">
+      <button class="close-recipe" onclick="closeRecipeDetail('winter')">← Back to recipes</button>
+      <div id="winter-recipe-content"></div>
+    </div>
+    <div id="winter-recipe-list">
+      <div class="section">
+        <div class="section-title">Slow-Cooked Mains</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('winter', 'citrus-pot-roast-w')"><div class="recipe-card-title">Citrus-Thyme Pot Roast</div><div class="recipe-meta"><span>⏱ 2–3 hrs</span><span>👤 6 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">bone broth</span><span class="recipe-tag">orange</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('winter', 'garlic-beef-broccoli-w')"><div class="recipe-card-title">Garlic Beef and Broccoli</div><div class="recipe-meta"><span>⏱ 30 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">beef</span><span class="recipe-tag">ginger</span><span class="recipe-tag">coconut aminos</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('winter', 'salmon-chowder-w')"><div class="recipe-card-title">Salmon Chowder</div><div class="recipe-meta"><span>⏱ 2 hrs</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">salmon</span><span class="recipe-tag">root veg</span><span class="recipe-tag">coconut</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('winter', 'spicy-cod-sheet')"><div class="recipe-card-title">Spicy Cod & Veg Sheet Pan</div><div class="recipe-meta"><span>⏱ 20 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">cod</span><span class="recipe-tag">broccoli</span><span class="recipe-tag">chilli</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('winter', 'shrimp-stirfry')"><div class="recipe-card-title">Shrimp and Green Bean Stir-Fry</div><div class="recipe-meta"><span>⏱ 10 min</span><span>👤 3 servings</span></div><div class="recipe-tags"><span class="recipe-tag">shrimp</span><span class="recipe-tag">green beans</span><span class="recipe-tag">ginger</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('winter', 'sear-halibut')"><div class="recipe-card-title">Sear-Roasted Halibut</div><div class="recipe-meta"><span>⏱ 15 min</span><span>👤 2 servings</span></div><div class="recipe-tags"><span class="recipe-tag">halibut</span><span class="recipe-tag">citrus</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Warming Sides</div>
+        <div class="recipe-grid">
+          <div class="recipe-card" onclick="showRecipe('winter', 'roast-brussels')"><div class="recipe-card-title">Roast Brussels Sprouts on Barley</div><div class="recipe-meta"><span>⏱ 45 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">Brussels sprouts</span><span class="recipe-tag">hazelnuts</span></div></div>
+          <div class="recipe-card" onclick="showRecipe('winter', 'mushroom-rice')"><div class="recipe-card-title">Mushroom + Rosemary Wild Rice</div><div class="recipe-meta"><span>⏱ 25 min</span><span>👤 4 servings</span></div><div class="recipe-tags"><span class="recipe-tag">mushrooms</span><span class="recipe-tag">kale</span><span class="recipe-tag">wild rice</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- KITCHEN SKILLS -->
+  <div id="page-kitchen-skills" class="page-section">
+    <div class="page-header">
+      <h1 class="page-title">Kitchen Skills</h1>
+      <p class="page-subtitle">Essential techniques for nourishing, whole-food cooking</p>
+    </div>
+
+    <div class="callout callout-tip"><span class="callout-icon">💡</span> These skills underpin every recipe in this collection. Master them and the whole kitchen opens up.</div>
+
+    <div class="section">
+      <div class="section-title">Knife Skills</div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <h4>🔪 Basic cuts</h4>
+          <ul class="skill-list">
+            <li><strong>Julienne:</strong> thin matchstick strips (for slaws, stir-fries)</li>
+            <li><strong>Brunoise:</strong> very fine dice — 3mm cubes (for dressings, garnishes)</li>
+            <li><strong>Chiffonade:</strong> fine ribbons of leafy herbs (basil, mint)</li>
+            <li><strong>Bias cut:</strong> diagonal slices to increase surface area (spring onions)</li>
+            <li>Always curl fingers under — protect tips from blade</li>
+            <li>Use a sharp knife — blunt knives slip and cause injuries</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🧅 Aromatics prep</h4>
+          <ul class="skill-list">
+            <li>Slice onion through root — halve, then fan-cut parallel to board</li>
+            <li>Garlic: crush with flat blade to loosen skin, then mince</li>
+            <li>Ginger: freeze first for easier grating; no need to peel</li>
+            <li>Fennel: discard tough outer layer, reserve fronds for garnish</li>
+            <li>Spring onions: white and green parts cook at different times — separate</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🥬 Prepping greens</h4>
+          <ul class="skill-list">
+            <li>Swiss chard: separate stalks from leaves — stalks take 5 min longer</li>
+            <li>Kale: strip leaves from stems, massage raw with acid + oil to soften</li>
+            <li>Spinach: wilts dramatically — cook in dry pan until just wilted, squeeze liquid</li>
+            <li>Collard greens: blanch 3 min, refresh in ice water to keep bright green</li>
+            <li>Wash all greens by dunking, not rinsing — soil sinks to bottom</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🐟 Breaking down fish</h4>
+          <ul class="skill-list">
+            <li>Pin bones: run finger along flesh to locate, pull out with tweezers or pliers</li>
+            <li>Skin removal: angle blade between skin and flesh, push forward not through</li>
+            <li>Score skin before cooking — prevents curling in the pan</li>
+            <li>Always pat fish dry before cooking — moisture = steam = not crispy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Cooking Techniques</div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <h4>🔥 Searing protein perfectly</h4>
+          <ul class="skill-list">
+            <li>Pan must be HOT before adding protein — drops should bead and roll</li>
+            <li>Pat protein dry — moisture is the enemy of a crust</li>
+            <li>Season just before cooking (salt draws moisture if left too long)</li>
+            <li>Do not move — let it release naturally when a crust forms</li>
+            <li>Fish skin-side down first; press flat for first 30 seconds</li>
+            <li>Rest all meat after cooking (2–5 min) to redistribute juices</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🥚 Egg mastery</h4>
+          <ul class="skill-list">
+            <li><strong>Soft-boiled:</strong> 6 min from rolling boil, ice bath immediately</li>
+            <li><strong>Hard-boiled:</strong> 9–10 min, ice bath, peel under cold water</li>
+            <li><strong>Scrambled:</strong> low heat, off-heat stirring — silky, never rubbery</li>
+            <li><strong>Frittata:</strong> oven finishes what hob starts — 180°C, 5–8 min</li>
+            <li><strong>Poaching:</strong> gentle simmer (not boil), fresh eggs, white vinegar</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🫙 Building flavour</h4>
+          <ul class="skill-list">
+            <li>Salt at every stage, not just at the end</li>
+            <li>Acid (lemon, vinegar) brightens and lifts — add at the end</li>
+            <li>Fat carries flavour — finish dishes with good olive oil</li>
+            <li>Bloom spices in dry pan or oil before adding liquid</li>
+            <li>Deglaze pans with lemon juice or vinegar — capture all browned bits</li>
+            <li>Taste and adjust before serving</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>♨️ Roasting vegetables</h4>
+          <ul class="skill-list">
+            <li>Cut pieces to the same size for even cooking</li>
+            <li>Don't crowd the pan — vegetables steam instead of roast</li>
+            <li>200–220°C for most vegetables; lower for delicate ones</li>
+            <li>Toss in fat and season well before roasting</li>
+            <li>Flip once at halftime — don't disturb too early</li>
+            <li>Roast extra — they store well and are great cold in salads</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Bone Broth Mastery</div>
+      <div class="skill-card" style="max-width: 600px;">
+        <h4>🍖 Making bone broth</h4>
+        <ul class="skill-list">
+          <li>Use roasted bones for deeper colour and flavour (roast at 200°C for 30 min first)</li>
+          <li>Cold water start — brings up impurities, skim foam in first 30 min</li>
+          <li>Add apple cider vinegar (2 tbsp per 2L) — draws minerals from bones</li>
+          <li>Low and slow: 8–12 hours hob, 18–24 hours slow cooker, 3–4 hours pressure cooker</li>
+          <li>Add aromatics in last 2 hours only — long cooking makes herbs bitter</li>
+          <li>Good broth gels when cold — this means good collagen extraction</li>
+          <li>Season with salt and lemon after straining, not before</li>
+          <li>Freeze in portions — silicone ice cube trays for small amounts</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Blending & Emulsifying</div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <h4>🫙 Dressings and emulsions</h4>
+          <ul class="skill-list">
+            <li>Emulsification: acid + fat + an emulsifier (mustard, egg yolk)</li>
+            <li>Add oil slowly at first — pour thin stream while blending</li>
+            <li>If it splits: restart with fresh egg yolk, slowly whisk broken emulsion in</li>
+            <li>Taste on the actual ingredient — what tastes sharp in the bowl is often perfect on salad</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🥣 Blender safety and pesto</h4>
+          <ul class="skill-list">
+            <li>Never fill blender more than halfway with hot liquid</li>
+            <li>Hold lid with towel — steam builds pressure</li>
+            <li>Pesto: bash in mortar first for texture, add oil last</li>
+            <li>Paté: blend while warm for smoothest texture</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Food Safety & Storage</div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <h4>🌡️ Temperature rules</h4>
+          <ul class="skill-list">
+            <li>Bacteria grow between 5°C–60°C (the "danger zone")</li>
+            <li>Cook fish to 63°C internal; poultry to 75°C; beef varies by cut</li>
+            <li>Marinated proteins: always marinate in fridge, not on counter</li>
+            <li>Cool food before refrigerating — but don't leave out more than 2 hours</li>
+            <li>Label everything with date. When in doubt, throw it out</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>📦 Batch storage</h4>
+          <ul class="skill-list">
+            <li>Glass containers over plastic — no leaching, easy to see contents</li>
+            <li>Greens: paper towel lining absorbs moisture and doubles shelf life</li>
+            <li>Cooked proteins: keep in their cooking juices — keeps them moist</li>
+            <li>Pâté: cover completely with melted ghee for longer shelf life (up to 1 week)</li>
+            <li>Dressings: always in sealed jars in fridge; shake before using</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>🥑 Freshness tricks</h4>
+          <ul class="skill-list">
+            <li>Avocados: store with stone in, brush cut surface with lemon juice</li>
+            <li>Herbs: stand in a glass of water like flowers (not basil — keep on counter)</li>
+            <li>Citrus: room temperature yields more juice than cold</li>
+            <li>Tomatoes: never refrigerate — kills flavour and texture</li>
+            <li>Berries: don't wash until ready to eat</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <h4>⚗️ Fermented foods</h4>
+          <ul class="skill-list">
+            <li>Store all fermented foods in fridge after opening</li>
+            <li>Kombucha: always refrigerated; drink within 1–2 weeks of opening</li>
+            <li>Kimchi: gets more sour with time — use older batches in cooked dishes</li>
+            <li>Introduce fermented foods gradually if your gut is not used to them</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Seasoning & Taste</div>
+      <div class="skill-card" style="max-width: 600px;">
+        <h4>🧂 The five elements of taste</h4>
+        <ul class="skill-list">
+          <li><strong>Salt</strong> — enhances and rounds all other flavours. Season in layers.</li>
+          <li><strong>Acid</strong> — lemon, vinegar, fermented liquid. Brightens and lifts heaviness.</li>
+          <li><strong>Fat</strong> — carries flavour, creates mouthfeel. Use good olive oil generously at finish.</li>
+          <li><strong>Heat</strong> — chilli, pepper, ginger. Adds depth and circulation.</li>
+          <li><strong>Umami</strong> — anchovies, bone broth, coconut aminos. The savoury backbone.</li>
+          <li>When a dish feels flat: it needs more salt, acid, or both.</li>
+          <li>When a dish is too sharp: add fat or a touch of sweet (fruit, date, honey).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const recipeData = {
+  'golden-egg-pan': {
+    title: 'Golden Egg Pan',
+    time: '15 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 tbsp avocado oil or ghee','2 spring onions, white and green parts separated','1 garlic clove, minced','100g Swiss chard, stalks and leaves separated, chopped','1 courgette (230g), sliced into coins','2 tbsp water','1 tsp Dijon mustard','¼ tsp ground turmeric','¼ tsp black pepper','Salt to taste','4 large eggs','¼ cup (25g) grated Manchego or Pecorino Romano','2 tbsp extra-virgin olive oil'],
+    steps: ['Preheat oven to 180°C (160°C fan).','Grease a large ovenproof pan with avocado oil. Sauté spring onion whites and garlic for 1 minute.','Add chard stalks, courgette, and water. Cover and cook over medium-low heat for 10 minutes. Add chard leaves, mustard, turmeric, pepper, and salt. Stir until leaves wilt.','Make 4 wells in the mixture. Crack an egg into each and cook until whites begin to set.','Sprinkle with cheese and transfer to oven for 5 to 7 minutes until whites are set but yolks remain slightly runny.','Drizzle with olive oil and top with spring onion greens. Serve warm.'],
+    notes: 'This dish delivers outstanding protein and is perfect for breakfast — the turmeric gives it a beautiful golden hue. Serves with additional leafy greens sautéed in coconut oil to reach your 3-cup target.'
+  },
+  'superfood-omelet': {
+    title: 'Superfood Omelet, Two Ways',
+    time: '15 minutes',
+    servings: '1 serving',
+    difficulty: 'Easy',
+    ingredients: ['Base: 2 large eggs + 1 egg yolk, ¼ tsp turmeric, salt and pepper, 2 tsp avocado oil','Greek filling: 2 cups spinach, ½ tsp dried oregano, 4–6 mint leaves, 6 olives, ¼ cup feta','Turkish filling: ¼ red onion, ½ red bell pepper, 4–6 chard or kale leaves, 1 tomato, ½ tsp cumin'],
+    steps: ['For the filling: Sauté chosen filling ingredients in a pan until tender. Set aside.','For the omelet: Whisk eggs and egg yolk with turmeric, salt, and pepper until combined.','Heat oil in a clean pan over medium heat. Pour in eggs and cook until just set on top — do not stir.','Place prepared filling on one half of the omelet and fold over. Cook for 1 more minute.','Serve warm. The Greek version benefits from a drizzle of olive oil.'],
+    notes: 'Adding an extra egg yolk increases richness and protein. Both versions work beautifully with additional sautéed greens on the side to meet the 3-cup minimum per meal.'
+  },
+  'crispy-salmon-piccata': {
+    title: 'Crispy Salmon Piccata',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['4 wild salmon fillets (170g each), skin-on','3 tbsp avocado oil or ghee, divided','Salt and black pepper','2 garlic cloves, minced','1 tbsp apple cider vinegar or caper brine','2 tbsp fresh lemon juice','½ cup (120ml) goat\'s cream or coconut cream','¼ cup (35g) salt-packed capers, rinsed','2 tbsp chopped fresh parsley and/or dill','½ lemon, sliced into rounds'],
+    steps: ['Pat salmon dry. Season skin with salt and pepper.','Heat 1½ tbsp avocado oil in a pan over medium-high heat. Place salmon skin-side down. Cook 3–5 minutes until skin is very crispy. Flip and cook 1 more minute. Remove and set aside.','In the same pan, add remaining oil and garlic. Cook 1 minute. Add vinegar, lemon juice, and cream. Bring to a simmer.','Whisk in capers and herbs. Return salmon to pan to heat through for 1–2 minutes.','Add lemon slices. Serve with the pan sauce spooned over. Best eaten fresh.'],
+    notes: 'Use capers packed in salt (not brine) for the best flavour — rinse well before using. This is one of the highest-protein dishes in the collection.'
+  },
+  'charred-prawns': {
+    title: 'Charred Prawns, Cannellini Beans + Fennel',
+    time: '15 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['1 tbsp olive oil','325g raw tiger prawns (unpeeled)','150g wild rocket','1 large fennel bulb with fronds','400g tin cannellini beans, rinsed and drained','Salsa Verde (see recipe), to serve'],
+    steps: ['Heat a large frying pan over high heat for 2–3 minutes until very hot.','Rub oil over the prawns. Cook in a single layer for 4–5 minutes until pink and charred. Transfer to a plate.','Wash the rocket and pat dry. Slice the fennel lengthwise as thinly as possible (use a mandolin if available). Discard the core but reserve any fronds.','To assemble: Scatter rocket, beans, and fennel over a large platter. Spoon over 2½ tbsp salsa verde and toss gently. Top with charred prawns and fennel fronds.'],
+    notes: 'Make the Salsa Verde in advance (it keeps 3–4 days). The charred, salty prawns against the fresh fennel and bright salsa verde is one of the best flavour combinations in spring cooking.'
+  },
+  'salsa-verde': {
+    title: 'Salsa Verde',
+    time: '10 minutes',
+    servings: 'Small jar',
+    difficulty: 'Easy',
+    ingredients: ['Small bunch (15g) parsley','Small bunch (15g) basil','Small bunch (15g) mint','1 garlic clove','1½ tbsp capers','30g anchovies in oil, drained','1 tsp Dijon mustard','2 tbsp white or red wine vinegar','120ml extra-virgin olive oil'],
+    steps: ['Finely chop the herbs, garlic, capers, and anchovies on a board until very fine.','Transfer to a small bowl. Stir in the mustard, vinegar, and olive oil.','Taste and adjust — more vinegar for sharpness, more oil for smoothness.','Store in a sealed jar in the fridge for up to 3–4 days.'],
+    notes: 'The anchovy is the secret — it dissolves into the sauce and provides umami without any fishy taste. Serve with fish, chicken, beef, or any vegetable. Also excellent as a salad dressing.'
+  },
+  'chicken-liver-pate': {
+    title: 'A+ Chicken Liver Pâté',
+    time: '30 minutes',
+    servings: '10 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 tbsp ghee, plus more for topping','½ medium red onion (75g), diced','3 garlic cloves, minced','500g raw chicken livers','2 tbsp fresh thyme leaves','1 tbsp chopped fresh sage','¼ cup extra-virgin olive oil','2 tbsp dry white wine or cognac','Salt and black pepper'],
+    steps: ['Heat a frying pan with 2 tbsp ghee over medium heat. Sauté onion for 3 minutes until fragrant. Add garlic.','Cut sinews from the livers using a small knife. Chop into 2.5cm pieces. Add to the pan and cook 5–7 minutes, stirring often. They should be just opaque — do not overcook.','Stir in herbs and cook 2–3 more minutes. Remove from heat and rest 10 minutes.','Place liver mixture and all remaining ingredients in a blender. Process until smooth and creamy. Season generously.','Transfer to a container. To store, cover completely with melted ghee and refrigerate up to 1 week.'],
+    notes: 'One of the most nutrient-dense foods you can make. High in vitamin A, B12, iron, and CoQ10. Serve with Superseded Crackers or crudités. The ghee seal preserves it for up to a week.'
+  },
+  'superseded-crackers': {
+    title: 'Superseded Crackers (2 Ways)',
+    time: '90 minutes',
+    servings: '24 crackers',
+    difficulty: 'Easy',
+    ingredients: ['⅓ cup sunflower seeds','⅓ cup sesame seeds','¼ cup flaxseeds','¼ cup chia seeds','⅓ cup pumpkin seeds','2 tbsp poppy seeds','1 tsp sea salt','1 cup water','Cheesy variation: + 3 tbsp nutritional yeast, 1 tsp garlic powder, 2 tsp dried Italian herbs, 4–6 sun-dried tomatoes'],
+    steps: ['Preheat oven to 140°C fan.','Process half the seeds in a food processor to a coarse meal.','Combine with whole seeds, salt, and chosen variation spices. Add water and let sit 5–10 minutes until the mixture gels.','Spread thinly on a parchment-lined baking tray — use a wet spatula or the back of a wet spoon.','Bake 50–60 minutes until completely dry and crisp. Let cool, then crack into pieces.'],
+    notes: 'These crackers are entirely gluten-free and packed with omega-3 fats, fibre, and minerals. Make a double batch — they keep for 2 weeks in an airtight jar and are perfect with pâté or any dip.'
+  },
+  'supergreen-tabbouleh': {
+    title: 'Supergreen Tabbouleh',
+    time: '20 minutes',
+    servings: '8 as a side',
+    difficulty: 'Easy',
+    ingredients: ['1 medium broccoli (400g)','2 tbsp avocado oil or ghee','2 spring onions, sliced','1 small red onion, chopped','3 garlic cloves, minced','1½ cups (30g) chopped fresh parsley','¾ cup (15g) chopped fresh mint','1 medium tomato, diced','½ cucumber, diced','¼ cup extra-virgin olive oil','¼ cup fresh lemon juice','Salt and black pepper','¼ cup macadamia nuts or hazelnuts, crushed'],
+    steps: ['Pulse broccoli in a food processor until it resembles rough rice grains — do not over-process.','Sauté broccoli "rice" in avocado oil over medium heat for 5 minutes. Season and let cool completely.','Mix cooled broccoli with spring onions, red onion, garlic, parsley, mint, tomato, and cucumber.','Whisk olive oil and lemon juice together. Pour over and toss well. Season to taste.','Top with crushed nuts. Store in fridge for up to 4 days.'],
+    notes: 'This broccoli-based tabbouleh provides a powerful sulphur-rich base that works as a salad, side, or bowls component all week. The broccoli must be fully cooled before mixing — warm broccoli wilts the herbs.'
+  },
+  'green-goddess-salad': {
+    title: 'Green Goddess Salad',
+    time: '10 minutes',
+    servings: '2–4 servings',
+    difficulty: 'Easy',
+    ingredients: ['Dressing: ½ cup blender mayonnaise, ½ cup mixed fresh herbs (parsley, dill, basil, chives), ½ tsp onion powder, 2 anchovies, 1 garlic clove, 2 tbsp lemon juice, salt and pepper','Salad: 2 cups spinach, 2 cups watercress or rocket, ½ red onion sliced, 1 red bell pepper sliced, 1 avocado sliced, 2 hard-boiled eggs halved, 3 tbsp pumpkin seeds'],
+    steps: ['Dressing: Place all dressing ingredients in a food processor. Blitz until smooth and bright green.','Combine spinach and watercress in a large bowl. Add onion, pepper, avocado, and egg halves.','Sprinkle with pumpkin seeds and drizzle with dressing. Serve immediately.'],
+    notes: 'Add poached or grilled salmon (150–200g per person) to transform this into a complete high-protein meal. The dressing keeps for 2 days in the fridge.'
+  },
+  'steak-salad': {
+    title: 'Steak Salad Bowl with Asparagus, Avocado + Gremolata',
+    time: '20 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 lean beef steaks (300g total)','2 tbsp avocado oil','Salt and pepper','14–16 asparagus spears','4 cups leafy greens','½ small red onion, sliced','½ large avocado, sliced','Gremolata: 1 bunch parsley, 4 garlic cloves, 2 tbsp lemon zest, 1 tbsp lemon juice, ½ cup olive oil, salt and pepper'],
+    steps: ['Gremolata: Blitz all gremolata ingredients in a food processor until smooth.','Season steaks with salt and pepper. Sear in 1 tbsp avocado oil over high heat, 4 minutes per side for medium-rare. Rest 5 minutes then slice against the grain.','Sauté asparagus in remaining oil, 5–7 minutes until just tender and slightly charred.','Assemble: Layer greens in bowls. Top with red onion, asparagus, sliced steak, and avocado. Drizzle generously with gremolata.'],
+    notes: 'One of the highest-protein meals in the collection. Rest the steak fully — this is not optional. Slicing against the grain makes all the difference to tenderness.'
+  },
+  'salmon-brain-bowl': {
+    title: 'Five-Superfood Salmon Brain Bowl',
+    time: '20 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 wild salmon fillets (170g each)','Lemon juice, salt, pepper, 1 tbsp avocado oil','½ fennel bulb + 1 courgette, spiralized, 2 tbsp olive oil','Golden Mayo: ¼ cup mayo, 1 tbsp Dijon mustard, ¼ tsp turmeric, 1 tsp dill','To assemble: 1 avocado, 2 eggs, ⅓ cup macadamia nuts, 10 olives, chilli flakes, dill, coconut flakes'],
+    steps: ['Drizzle salmon with lemon juice, salt, and pepper. Sear in avocado oil over medium-high heat, 3–4 minutes per side.','Using a mandolin or spiralizer, create fennel and courgette noodles. Toss with olive oil and season.','Mix all golden mayo ingredients in a small bowl.','Divide noodles between two bowls. Add sliced avocado, drizzle with lemon. Add halved eggs, macadamia nuts, olives, and salmon. Season with salt, pepper, and chilli flakes. Finish with dill and coconut flakes.'],
+    notes: 'The five "superfoods" in this bowl: wild salmon (omega-3s), avocado (healthy fats), eggs (complete protein), macadamia nuts (brain fats), and coconut flakes (MCTs). Remarkably satisfying.'
+  },
+  'turkey-meatballs': {
+    title: 'Turkey Meatballs with Salsa Verde',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['1 tbsp avocado oil, 1 small red onion, 1 tsp fresh thyme','500g ground turkey, 1 large egg, ¼ tsp salt, ¼ tsp black pepper, zest of 1 lemon','Salsa Verde (see recipe) to serve'],
+    steps: ['Sauté onion and thyme in oil for 3 minutes.','Combine sautéed onion with turkey, egg, salt, pepper, and lemon zest. Mix well. Form into 16 small meatballs.','Brown meatballs in a pan for 8 minutes total, turning once or twice.','Serve with generous amounts of salsa verde drizzled over. Best with a simple salad.'],
+    notes: 'These meatballs can be made ahead and refrigerated raw for up to 2 days. They also freeze well — cook from frozen, adding 4 extra minutes.'
+  },
+  'salmon-crepes': {
+    title: 'Green Spinach & Salmon Crepes',
+    time: '15 minutes',
+    servings: '1 serving',
+    difficulty: 'Easy',
+    ingredients: ['Crepe: ½ cup spinach, small bunch parsley, ½ tsp thyme, 1 tbsp nutritional yeast, 1 tbsp flax meal, salt and pepper, 2 large eggs, 2 tsp avocado oil','Filling: 85g smoked salmon, ½ avocado sliced, 2 tbsp crumbled goat\'s cheese, 1 tsp lemon juice'],
+    steps: ['Blitz spinach, herbs, nutritional yeast, flax, salt, pepper, and eggs in a blender until smooth.','Heat oil in a large pan. Pour in batter and swirl to coat the bottom evenly. Cook 3–4 minutes until set on top. Flip carefully and cook 1 more minute.','Lay smoked salmon, avocado, and goat\'s cheese on one half. Drizzle with lemon juice.','Fold over and serve warm, garnished with herbs or microgreens.'],
+    notes: 'Nutritional yeast adds B-vitamins and a cheesy flavour without dairy. The green batter is striking and the whole dish comes together in under 15 minutes.'
+  },
+  'sardine-patties': {
+    title: 'Sardine Patties + Olive Tapenade',
+    time: '20 minutes',
+    servings: '3 servings',
+    difficulty: 'Easy',
+    ingredients: ['Patties: 285g canned sardines, ½ small red onion diced, zest of 1 lemon, 2 tbsp fresh dill or parsley, 1 large egg, 2 tbsp coconut flour, salt and pepper, 2 tbsp avocado oil','Tapenade: 160g Kalamata olives, 1 garlic clove, 1 tbsp capers, 15g anchovies, 2 tbsp parsley, 2 tsp lemon juice, 3 tbsp olive oil'],
+    steps: ['Sauté onion in 1 tbsp oil until soft. Mix with sardines, lemon zest, herbs, egg, coconut flour, salt, and pepper. Form into 6 patties.','Blend tapenade ingredients until a rough paste forms. Taste and season.','Heat remaining oil and fry patties 3–4 minutes per side until golden.','Serve with tapenade and lemon wedges.'],
+    notes: 'Sardines are one of the most omega-3-rich and sustainable fish available. This is also an excellent source of calcium (from the soft bones). The tapenade keeps for 2 weeks in the fridge.'
+  },
+  'sausage-avo-egg': {
+    title: 'Sausage-Avo-Egg Stack',
+    time: '15 minutes',
+    servings: '1 serving',
+    difficulty: 'Easy',
+    ingredients: ['125g homemade sausage meat (or ground pork seasoned with rosemary, sage, cloves, nutmeg, salt)','1 tbsp avocado oil','½–1 small avocado (100g)','¼ small red onion, diced','1 tbsp fresh lemon juice','1 tbsp extra-virgin olive oil','Salt and black pepper','1 large egg'],
+    steps: ['Form 125g sausage mixture into a small patty. Cook in avocado oil over medium heat, 2–3 minutes per side until cooked through.','Mash avocado with red onion, lemon juice, olive oil, salt, and pepper.','Fry the egg in the sausage fat until whites are set but yolk is runny.','Assemble: patty at base, avocado mash on top, fried egg on top. Sprinkle with chilli flakes.'],
+    notes: 'For the bulk sausage batch: combine 500g ground pork with minced garlic, flax meal, mint, sage, rosemary, cloves, nutmeg, vinegar, salt, and pepper. Shape and freeze in 125g portions.'
+  },
+  'superfood-shakshuka': {
+    title: 'Superfood Shakshuka',
+    time: '20 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 tbsp avocado oil or ghee','½ small red onion, chopped','2 garlic cloves, minced','1 small red bell pepper, sliced','1 small courgette, chopped','½ tsp each: cumin, turmeric, coriander, paprika','100g spinach','¾ cup (180ml) canned tomatoes','4 large eggs','Toppings: ½ avocado, 1 tbsp lemon juice, ¼ cup crumbled feta, 2 tbsp olive oil'],
+    steps: ['Preheat oven to 200°C (180°C fan).','Sauté onion, garlic, bell pepper, and courgette in avocado oil for 3–4 minutes. Add spices and cook 30 seconds.','Add spinach and tomatoes. Simmer until spinach wilts completely.','Make 4 wells in the sauce. Crack an egg into each. Transfer to oven and bake 5–8 minutes until whites are set but yolks still runny.','Top with sliced avocado, lemon juice, crumbled feta, and a drizzle of olive oil.'],
+    notes: 'The spice combination here — cumin, turmeric, coriander, paprika — is powerfully anti-inflammatory. The feta adds a welcome sharpness. Serve with sautéed greens on the side.'
+  },
+  'spanish-scramble': {
+    title: 'Spanish Scramble',
+    time: '20 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['1 tbsp avocado oil','½ small red onion','200g chard','85g Mexican chorizo (or other quality sausage)','4 large eggs + 2 egg yolks','Salt and black pepper','85g cherry tomatoes','1 tbsp olive oil','57g shaved Manchego cheese'],
+    steps: ['Sauté onion and chorizo in avocado oil for 2–3 minutes. Add chard stalks first, then leaves until wilted.','Whisk eggs and yolks with salt and pepper. Pour into the pan.','Cook over low heat, folding very gently — you want large, soft, silky curds. Take off heat while still slightly underdone.','Add halved tomatoes and toss for 30 seconds.','Drizzle with olive oil and top with shaved Manchego. Serve immediately.'],
+    notes: 'The extra egg yolks create a richer, creamier scramble. The key to perfect scrambled eggs is low heat and patience — never stir too fast or on high heat.'
+  },
+  'greek-power-bowl': {
+    title: 'Greek Breakfast Power Bowl',
+    time: '20 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['3 tbsp avocado oil or ghee, divided','1 garlic clove, minced','2 tsp fresh rosemary, chopped','115g aubergine, roughly chopped','230g courgette, roughly chopped','1 tbsp fresh lemon juice','2 tbsp fresh mint, chopped','1 small red bell pepper, roughly chopped','170g halloumi, cubed','½ cup Kalamata olives, pitted','4 large eggs, soft- or hard-boiled','1 tbsp extra-virgin olive oil'],
+    steps: ['Heat a pan with 2 tbsp avocado oil. Sauté garlic and rosemary for 1 minute.','Add aubergine, courgette, and lemon juice. Cook 10–15 minutes until tender. Stir in mint. Transfer to a bowl.','Grease the pan with remaining oil and cook halloumi cubes 2–3 minutes per side until golden.','Serve halloumi over the vegetables with olives and eggs. Drizzle with olive oil.'],
+    notes: 'Halloumi has a high melting point making it ideal for pan-frying. Make sure the pan is very hot before adding it — it should sizzle immediately and not stick.'
+  },
+  'salmon-ratatouille': {
+    title: 'Salmon Ratatouille Pan',
+    time: '40 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 tbsp avocado oil','1 small red onion, sliced','2 garlic cloves, minced','1 red bell pepper, sliced','1 aubergine (300g), cubed','1 cup canned tomatoes','¼ cup water','2 tbsp lemon juice, divided','1 courgette, cubed','1 tsp dried Italian herbs','Salt and pepper','4 wild salmon fillets (140g each), skin-on','¼ cup extra-virgin olive oil','Fresh basil to serve'],
+    steps: ['Heat avocado oil in a large oven-safe pan. Sauté onion and garlic for 5 minutes.','Add bell pepper, aubergine, canned tomatoes, water, and 1 tbsp lemon juice. Simmer covered, 8–10 minutes.','Add courgette, herbs, salt, and pepper. Simmer uncovered 5 minutes more.','Preheat oven to 200°C. Nestle salmon fillets skin-side up on the vegetables. Drizzle with remaining lemon juice.','Bake 8–10 minutes. For crispier skin, broil for 2–3 more minutes.','Drizzle with olive oil and scatter basil before serving.'],
+    notes: 'This dish is a whole meal in one pan. The vegetables act as a bed that steams the salmon from below while the oven crisps the skin. Store leftovers in fridge for up to 3 days.'
+  },
+  'coconut-shrimp': {
+    title: 'Coconut Shrimp Pan',
+    time: '15 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['3 tbsp avocado oil or ghee','2 spring onions, white and green parts separated','3 garlic cloves, minced','1 red chilli, finely chopped','250g raw peeled shrimp','¼ cup (64g) coconut butter','Salt and pepper','2 tbsp olive oil','2 courgettes, spiralized'],
+    steps: ['Heat 1 tbsp oil in a pan. Sauté spring onion whites, garlic, and chilli for 1–2 minutes.','Add shrimp and cook 2 minutes until opaque. Stir in coconut butter and season. Remove shrimp.','Add remaining oil and courgette noodles. Toss for 1–3 minutes.','Return shrimp, toss with spring onion greens, and serve immediately.'],
+    notes: 'Coconut butter (also called coconut manna or coconut concentrate) is different from coconut oil — it is the whole coconut blended, and gives a thick, creamy sauce. Do not overcook the shrimp — they become rubbery.'
+  },
+  'pancetta-sea-bass': {
+    title: 'Pancetta-Wrapped Sea Bass Sheet Pan',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['4 courgettes','170g buffalo mozzarella, torn','¼ cup Macadamia Basil Pesto','¼ cup extra-virgin olive oil','12 pancetta slices (140g)','4 sea bass or sea bream fillets (560g total)','Salt, pepper, fresh herbs to garnish'],
+    steps: ['Preheat oven to 200°C fan.','Spiralize courgettes. Create four nests on a large baking tray. Scatter mozzarella over each nest.','Mix pesto and olive oil. Drizzle over courgette nests.','Wrap 3 pancetta slices around each fish fillet and place on top of the nests. Season with salt and pepper.','Bake 7–10 minutes until fish is just cooked and pancetta is crispy. Garnish with fresh herbs.'],
+    notes: 'The pancetta self-bastes the fish as it cooks and renders, keeping the sea bass moist inside. The courgette nest catches all the lovely juices.'
+  },
+  'garlic-beef-broccoli': {
+    title: 'Garlic Beef and Broccoli',
+    time: '30 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['½ tbsp cooking fat','900g grass-fed beef steak, sliced very thin (¼ inch)','5 garlic cloves, minced','1½-inch piece ginger, minced','1 large broccoli, chopped into florets','2 tbsp water or bone broth','⅓ cup coconut aminos','½ lemon, juiced','¼ tsp sea salt'],
+    steps: ['Heat cooking fat in a wok or large pan over medium-high heat.','Sauté beef slices for 7 minutes until browned. Remove and set aside.','Lower heat to medium. Add garlic and ginger, stir 1 minute. Add broccoli and cook a few minutes.','Add water, cover, and cook on medium-low for 10 minutes until broccoli is just tender.','Add coconut aminos, lemon juice, salt, and return beef. Toss and serve.'],
+    notes: 'Coconut aminos is a soy-free, gluten-free alternative to soy sauce with a slightly sweeter, milder flavour. Freeze the beef for 20 minutes before slicing for easier, thinner cuts.'
+  },
+  'oregano-halloumi': {
+    title: 'Oregano Halloumi, Tomatoes + Mint Yoghurt',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['250g halloumi, sliced into 8 rounds','1½ tbsp dried mint','¼ tsp sea salt','1½ tbsp olive oil','1 large cucumber, sliced','350g ripe tomatoes, sliced','90g pitted black olives','Mint and dill sprigs','2½ tbsp red wine vinegar','Mint Yoghurt: 250g goat/sheep yoghurt, 1½ tsp dried mint, ¼ tsp salt, ½ tsp honey, ½ garlic clove'],
+    steps: ['Marinate halloumi slices in mint, salt, and 1 tbsp oil for 10 minutes.','Mix yoghurt with dried mint, salt, honey, and grated garlic. Taste and adjust.','Arrange cucumber and tomato slices on a platter. Scatter olives and fresh herbs.','Drizzle with red wine vinegar.','Fry halloumi in a hot pan 2 minutes per side until deep golden. Place on top of salad.'],
+    notes: 'Room temperature yoghurt has a better texture for serving. The halloumi must go straight from the pan to the plate — it becomes rubbery and tough as it cools.'
+  },
+  'italian-power-bowls': {
+    title: 'Italian "A2" Power Bowls',
+    time: '1 hour',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['2 chicken breasts (170g each)','Salt, pepper, 1 tbsp avocado oil','1 courgette, spiralized, 1 tbsp avocado oil','Pesto Dressing: 3 tbsp Macadamia Basil Pesto + 2 tbsp olive oil','To assemble: 2 cups spinach or rocket, 125g buffalo mozzarella torn, 8 cherry tomatoes halved, 10 olives, 1 tbsp pumpkin seeds'],
+    steps: ['Season chicken and sauté in avocado oil over medium-high heat, 5–7 minutes per side. Rest and slice.','Sauté courgette noodles in oil for 1–3 minutes until just tender.','Mix pesto and olive oil for the dressing.','Layer greens in two bowls. Top with courgette noodles, sliced chicken, mozzarella, tomatoes, and olives. Finish with pumpkin seeds and pesto dressing.'],
+    notes: 'A2 refers to A2 casein protein found in buffalo mozzarella and some goat/sheep cheeses, which is generally better tolerated than A1 casein in conventional cow\'s dairy.'
+  },
+  'basil-oil': {
+    title: 'Basil Oil',
+    time: '5 minutes',
+    servings: 'Small jar (~150ml)',
+    difficulty: 'Easy',
+    ingredients: ['60ml extra-virgin olive oil','½ garlic clove (optional)','Pinch of sea salt','Large bunch (30g) fresh basil (stalks and all)','Juice of ½–1 lemon'],
+    steps: ['Place all ingredients in a food processor or blender. Start with juice of half a lemon.','Blitz until smooth and pourable.','Taste — add more lemon juice if needed.','Store in a jar in the fridge for 3–4 days.'],
+    notes: 'This is a quick alternative to pesto — no nuts, so it can be drizzled freely. Excellent on bitter salad leaves, grilled fish, or roasted vegetables. The colour is extraordinary — vivid green.'
+  },
+  'lemon-basil-pesto': {
+    title: 'Lemon and Basil Pesto',
+    time: '10 minutes',
+    servings: 'Small jar',
+    difficulty: 'Easy',
+    ingredients: ['½ small garlic clove','¼–½ tsp sea salt flakes','30g fresh basil leaves','30g pine nuts, toasted','75ml extra-virgin olive oil','Zest and juice of 1 lemon','20g Parmesan, finely grated'],
+    steps: ['Bash the garlic and salt in a mortar until a paste forms.','Add most of the basil and pine nuts. Bash to a rough paste — keep some texture.','Drizzle in the olive oil, lemon zest, half the lemon juice, and Parmesan. Stir to combine.','Taste — add more lemon juice or salt as needed.','Store in a jar in the fridge for 3–4 days.'],
+    notes: 'Traditional mortar and pestle gives a better texture than a blender, but a food processor works well too. Toast the pine nuts in a dry pan — it takes 2 minutes and dramatically improves the flavour.'
+  },
+  'fennel-tzatziki': {
+    title: 'Fennel Tzatziki',
+    time: '10 minutes',
+    servings: '6 servings',
+    difficulty: 'Easy',
+    ingredients: ['1 medium cucumber (150g)','½ small fennel bulb (65g)','500g full-fat sheep\'s or goat\'s milk yoghurt','5 tbsp extra-virgin olive oil, divided','2 tbsp fresh lemon juice','1 tsp finely grated lemon zest','1 garlic clove, crushed','2 tbsp fresh dill, chopped','Salt and black pepper'],
+    steps: ['Grate the cucumber. Place in a clean cloth and squeeze out excess liquid.','Finely slice or grate the fennel bulb.','Combine yoghurt, 3 tbsp olive oil, lemon juice, zest, garlic, and dill. Season well.','Stir in the cucumber and fennel.','Drizzle with remaining 2 tbsp olive oil. Store in fridge up to 5 days.'],
+    notes: 'Squeezing the water out of the cucumber is essential — skip this and the tzatziki will be watery within an hour. Sheep\'s or goat\'s yoghurt has a tangier, richer flavour than cow\'s milk yoghurt.'
+  },
+  'anchovy-roast-peppers': {
+    title: 'Anchovy Roast Peppers',
+    time: '40 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['2½ tbsp extra-virgin olive oil','4 red or orange pointed peppers','10 anchovies in olive oil','3 garlic cloves, finely sliced','½ tsp chilli flakes','¼ tsp black pepper','400g tin butter beans, rinsed','30g flat-leaf parsley leaves','6 cherry tomatoes, sliced','Juice of ½ lemon','Pinch of smoked paprika'],
+    steps: ['Preheat oven to 200°C (180°C Fan). Lightly oil a large roasting tray.','Halve peppers lengthwise, remove seeds, place cut-side up in the tray.','Tear or slice anchovies and lay over peppers. Scatter garlic. Drizzle with oil, sprinkle chilli and pepper.','Cover with foil and roast 15 minutes. Remove foil and roast 20 more minutes until caramelised.','Combine butter beans with parsley and tomatoes. Dress with remaining oil, lemon juice, and paprika.','Divide beans between plates. Top with two pepper halves each.'],
+    notes: 'The anchovies melt into the peppers and become undetectable as fish — they simply add an incredible savoury depth. The roasting juices from the peppers are extraordinary — mop them up.'
+  },
+  'citrus-pot-roast': {
+    title: 'Citrus-Thyme Pot Roast',
+    time: '2–3 hours',
+    servings: '6 servings',
+    difficulty: 'Medium',
+    ingredients: ['1 tbsp solid cooking fat','1–1.5kg grass-fed beef roast','¾ cup bone broth','2 tbsp apple cider vinegar','1 orange, juiced','1 bay leaf','1½ tsp sea salt','3 carrots, cut into chunks','2 parsnips, peeled and cut into chunks','2 tbsp fresh thyme, chopped'],
+    steps: ['Preheat oven to 150°C (300°F).','Brown the roast on all sides in a heavy pot with melted fat over medium-high heat. Remove.','Add bone broth, vinegar, orange juice, bay leaf, and salt. Stir.','Return roast to pot and surround with carrots and parsnips. Sprinkle thyme over the top.','Cover tightly and braise for 2–3 hours. Check periodically — liquid should cover at least one third of the meat. It is done when meat pulls apart easily.','Remove bay leaf. Serve meat and vegetables with the braising liquid as a sauce.'],
+    notes: 'This is a foundational batch-cooking dish. Make Sunday and it feeds the week — shredded beef keeps beautifully in its braising liquid for 5 days in the fridge. The orange juice tenderises the meat.'
+  },
+  'moroccan-bowls': {
+    title: 'Moroccan Power Bowls',
+    time: '40 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['Roasted "Chickpeas": 134g macadamia nuts, 2 tsp coconut oil, 2 tsp Harissa Spice Mix, ½ tsp paprika','Lamb Meatballs: 500g ground lamb, 1 tbsp Harissa Spice Mix, 2 tbsp flax meal, 1 tsp paprika, 1 egg, 2 tsp apple cider vinegar, 1 garlic clove, 2 tbsp fresh mint','Cauli-Rice: 500g cauliflower, 2 tbsp avocado oil, 1 tsp turmeric, ½ tsp cumin, salt','To serve: 2 cups spinach, olive oil, optional yoghurt'],
+    steps: ['Preheat oven to 150°C. Toss macadamias with oil and spices. Roast 10–15 minutes until golden.','Combine all meatball ingredients and form into 16 small balls. Brown in a pan with oil, 3–4 minutes per side.','Grate cauliflower in a food processor. Sauté with oil and spices for 5 minutes.','Assemble: layer cauli-rice in bowls, add spinach, meatballs, and roasted macadamias. Drizzle with olive oil. Top with yoghurt if using.'],
+    notes: 'Harissa Spice Mix: combine cumin, coriander, paprika, turmeric, cinnamon, cayenne, and salt. Make a big batch and store in a jar. The macadamia "chickpeas" are addictively good as a snack too.'
+  },
+  'rosemary-beef-pan': {
+    title: 'Rosemary Shredded Beef Pan',
+    time: '45 minutes',
+    servings: '3–4 servings',
+    difficulty: 'Medium',
+    ingredients: ['3 tbsp solid cooking fat','3 sweet potatoes, cubed (1-inch pieces)','½ yellow onion, chopped','2 cups courgette, chopped','4 garlic cloves, minced','2 tbsp fresh rosemary, minced','½ tsp sea salt','2 cups shredded roast beef (from batch)'],
+    steps: ['Heat 2 tbsp cooking fat in a large pan over medium heat.','Add sweet potatoes and cook 10 minutes until slightly soft. Add onion and cook 5 minutes.','Add courgette, garlic, rosemary, and salt. Cook 10 more minutes until all vegetables are tender.','Add shredded beef and remaining fat. Toss and cook until beef is heated through.'],
+    notes: 'This is the ideal way to use leftover pot roast. The sweet potato provides slow-releasing carbohydrates — this is one of the very few higher-carb dishes in the collection, so adjust portion to your daily target.'
+  },
+  'herb-stuffed-trout': {
+    title: 'Herb-Stuffed Trout',
+    time: '30 minutes',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['1 tbsp solid cooking fat','2 whole trout (about 450g each)','½ tsp sea salt','1 lemon, sliced into thin rounds','4 sprigs fresh rosemary','4 sprigs fresh thyme'],
+    steps: ['Preheat oven to 230°C (450°F).','Coat the bottom of a baking dish with cooking fat. Sprinkle salt over the inside and outside of each fish.','Fill each cavity with lemon rounds and herb sprigs. Secure with kitchen twine or toothpicks.','Bake 15 minutes until the fish flakes easily with a fork.','Serve whole at the table — the presentation is beautiful.'],
+    notes: 'The simplest and most elegant fish dish in this collection. The herbs perfume the fish from the inside. Ask your fishmonger to gut and clean the trout — this is a free service at most fish counters.'
+  },
+  'deviled-mackerel': {
+    title: 'Deviled Mackerel + Fennel Slaw',
+    time: '1 hour (15 min prep)',
+    servings: '2 servings',
+    difficulty: 'Easy',
+    ingredients: ['Mackerel: 300g mackerel fillets, 2 tbsp avocado oil, 1 tsp balsamic vinegar, 1 tsp paprika, ⅛ tsp cayenne, salt and pepper','Fennel Slaw: 1 medium fennel bulb (fronds reserved), 1 celery stalk sliced, ½ small red onion sliced, 3 tbsp olive oil, 1 tbsp lemon juice, 1 tsp lemon zest, 1 garlic clove minced, 2 tbsp chopped fresh parsley/mint/tarragon'],
+    steps: ['Score the skin of the mackerel fillets (3–4 shallow diagonal slits). Mix oil, vinegar, paprika, cayenne, salt, and pepper. Marinate fish 30 minutes.','Make the slaw: thinly slice fennel (use a mandolin if possible). Combine with celery, onion, and dress with olive oil, lemon, garlic, and herbs. Season well.','Preheat oven to 160°C fan. Place fillets skin-side up on a lined tray. Bake 15–20 minutes.','Serve over the slaw with fennel fronds for garnish.'],
+    notes: 'Mackerel is one of the most omega-3 rich and sustainable fish available, and one of the most affordable. The deviled marinade — paprika + cayenne — cuts through the natural richness beautifully.'
+  },
+  'portobello-burger': {
+    title: 'Portobello "Burger"',
+    time: '30 minutes',
+    servings: '4 servings',
+    difficulty: 'Medium',
+    ingredients: ['4 tbsp garlic mayonnaise','2 tbsp solid cooking fat','4 portobello mushrooms, stemmed','½ yellow onion, sliced into thick rings','Sea salt','4–8 soft lettuce leaves','4 Three-Herb Beef Patties (see recipe)','1 avocado, sliced'],
+    steps: ['Melt mayonnaise in a warm-water bath until pourable. Make beef patties and set aside.','Heat a pan over medium heat with half the cooking fat.','Brush mushrooms and onion rings with remaining fat, sprinkle with salt. Sauté 10–15 minutes, flipping once, until golden.','Assemble: place lettuce leaves flat, layer beef patty, mayonnaise, caramelised onion, and portobello mushroom cap. Top with avocado slices.'],
+    notes: 'Three-Herb Beef Patties: combine 900g ground beef with 1 tbsp each of rosemary, thyme, and sage (fresh, finely chopped), plus 1 tsp salt. Form into 12 patties. Cook 5–8 minutes per side.'
+  },
+  'salmon-chowder': {
+    title: 'Salmon Chowder',
+    time: '2 hours',
+    servings: '4 servings',
+    difficulty: 'High',
+    ingredients: ['1 salmon carcass, 1 litre water, 1 bay leaf','2 tbsp solid cooking fat','1 large onion, chopped','4 garlic cloves, minced','4 parsnips, chopped','3 carrots, chopped','2 celery ribs, chopped','1 tbsp apple cider vinegar','1 tbsp fresh thyme','1½ tsp sea salt','700g salmon fillet, cubed (3cm pieces)','1 cup coconut milk','½ lemon, juiced','3 spring onions, sliced'],
+    steps: ['Boil salmon carcass with water and bay leaf. Reduce heat and simmer 1 hour. Strain and reserve broth.','Heat fat in a pot. Sauté onion and garlic 5 minutes. Add parsnips, carrots, and celery; cook 5 more minutes.','Add broth, vinegar, thyme, and salt. Simmer 30 minutes until vegetables are tender.','Blend 2 cups of the soup until smooth; return to pot for a creamy texture.','Add salmon chunks and coconut milk. Cook 8 minutes until salmon is just cooked.','Add lemon juice. Serve topped with spring onions.'],
+    notes: 'Save all salmon bones and heads in the freezer until you have enough for broth. This chowder is deeply nourishing — the coconut milk gives creaminess without dairy. The parsnips dissolve into the background, adding sweetness.'
+  },
+  'shrimp-scampi': {
+    title: 'Shrimp Scampi',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['¼ cup (57g) ghee','¼ cup (60ml) avocado oil','4 garlic cloves, minced','¼ cup fresh lemon juice','Salt and pepper','½ tsp dried oregano','680g raw peeled shrimp','200g shirataki or courgette noodles','¼ cup grated Pecorino Romano','¼ cup fresh parsley, chopped'],
+    steps: ['Heat ghee and avocado oil in a large pan over medium heat. Add garlic and sauté 1 minute.','Add lemon juice, salt, pepper, and oregano. Stir.','Add shrimp and cook 2–3 minutes until pink and just cooked through — do not overcook.','Add noodles and toss for 1–2 minutes.','Remove from heat. Garnish with Pecorino and parsley. Serve immediately.'],
+    notes: 'Shirataki noodles are made from konjac root — almost zero calories and carbs, with a similar mouthfeel to pasta. Rinse and dry them well before adding, or use courgette noodles instead.'
+  },
+  'kale-apple-slaw': {
+    title: 'Kale, Apple + Tarragon Slaw',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['75g pecan nuts','1 tbsp maple syrup','250g kale','1 tbsp lemon juice','2 tsp mayonnaise','150g natural yoghurt','1 tbsp olive oil','2 tbsp capers, drained and crushed','Small bunch (20g) tarragon','1 small fennel bulb','1 apple (Granny Smith)','¼ tsp sea salt flakes'],
+    steps: ['Toast pecans in a pan 2–3 minutes. Add maple syrup, cook until bubbling. Transfer to baking paper to cool, then crumble.','Wash, dry, and finely shred kale. Place in a bowl with lemon juice, mayonnaise, and yoghurt. Massage firmly into the kale for 2–3 minutes until softened.','Add oil, crushed capers, and tarragon. Thinly slice fennel and apple.','Toss everything together. Garnish with fennel fronds and the pecan brittle.'],
+    notes: 'Massaging kale with acid and fat is essential — raw kale is tough and bitter. After 2–3 minutes of massage it becomes silky and mild. The pecan brittle elevates this from a side to a centrepiece.'
+  },
+  'sticky-beetroot': {
+    title: 'Sticky Pomegranate Beetroot',
+    time: '25 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['200g freekeh or bulgur wheat','1–1½ tsp sea salt','600g bunch beetroots','60g shelled pistachios','30g flat-leaf parsley','1 lemon','400g tin chickpeas','30g fresh ginger, grated','2 tbsp extra-virgin olive oil','2 tbsp pomegranate molasses','100g pomegranate seeds (optional)'],
+    steps: ['Boil freekeh for 15–18 minutes. Drain.','Roast raw beets in a covered dish with a little water at 200°C for 25 minutes until tender. Peel and slice into wedges.','Toast pistachios in a pan for 1–2 minutes.','Mix freekeh with parsley, lemon juice, olive oil, and salt.','Heat a frying pan. Fry beet wedges with chickpeas, ginger, and pomegranate molasses for 1–2 minutes until sticky and caramelised.','Layer freekeh with the sticky beetroot mixture. Garnish with pistachios and pomegranate seeds.'],
+    notes: 'Pomegranate molasses is the secret — it caramelises the beets into sticky, jewel-like pieces. Find it at Middle Eastern grocery stores or make your own by reducing pomegranate juice with lemon juice.'
+  },
+  'dukkah': {
+    title: 'Dukkah',
+    time: '10 minutes',
+    servings: 'Small jar (lasts 3 weeks)',
+    difficulty: 'Easy',
+    ingredients: ['¼ tsp peppercorns','1 tsp cumin seeds','50g flaked almonds','25g sunflower seeds','25g sesame seeds','1 tsp ground coriander','¼ tsp smoked paprika','½ tsp dried oregano','1 tsp sea salt flakes'],
+    steps: ['Heat a large frying pan over medium heat. Add peppercorns and cumin seeds for 1 minute until fragrant.','Add almonds and sunflower seeds; toast 2–3 minutes until golden.','Add sesame seeds for 1–2 more minutes.','Transfer to a mortar and pestle. Add ground coriander, paprika, oregano, and salt. Crush to a coarse sand texture — keep some texture, do not make a powder.','Store in a jar for up to 3 weeks.'],
+    notes: 'Dukkah is an Egyptian spice-nut blend that adds extraordinary crunch and flavour to almost anything. Use it as a crust for fish, sprinkled over salads, or as a dip with olive oil and vegetables.'
+  },
+  'citrus-pot-roast-w': {
+    title: 'Citrus-Thyme Pot Roast',
+    time: '2–3 hours',
+    servings: '6 servings',
+    difficulty: 'Medium',
+    ingredients: ['1 tbsp solid cooking fat','1.5kg grass-fed beef roast','¾ cup bone broth','2 tbsp apple cider vinegar','1 orange, juiced','1 bay leaf','1½ tsp sea salt','3 carrots, in chunks','2 parsnips, in chunks','2 tbsp fresh thyme, chopped'],
+    steps: ['Preheat oven to 150°C.','Heat fat in a heavy pot. Brown the roast on all sides over medium-high heat. Remove.','Add broth, vinegar, orange juice, bay leaf, and salt. Stir well.','Return roast, surround with carrots and parsnips. Scatter thyme over.','Cover tightly. Braise 2–3 hours until meat pulls apart easily, checking every 45 minutes to ensure liquid is at least ⅓ up the meat.','Remove bay leaf. Serve with braising liquid.'],
+    notes: 'Make this on Saturday and it will carry you through the week. In winter, swap the orange for blood orange for a richer, more intense flavour. Serve the braising liquid as a sauce — it is extraordinary.'
+  },
+  'garlic-beef-broccoli-w': {
+    title: 'Garlic Beef and Broccoli',
+    time: '30 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['½ tbsp cooking fat','900g grass-fed beef steak, thinly sliced','5 garlic cloves, minced','1½-inch fresh ginger, minced','1 large broccoli head, chopped','2 tbsp bone broth or water','⅓ cup coconut aminos','½ lemon, juiced','¼ tsp sea salt'],
+    steps: ['Heat cooking fat in a wok over high heat.','Sauté beef for 7 minutes. Remove and set aside.','Lower heat. Add garlic and ginger, stir 1 minute. Add broccoli, cook 3 minutes.','Add broth, cover, reduce heat, cook 10 minutes until broccoli is tender.','Add coconut aminos, lemon juice, salt, and beef. Toss and serve.'],
+    notes: 'In winter, add a handful of sliced mushrooms with the broccoli for extra depth and immune-supporting beta-glucans. The coconut aminos caramelise beautifully on the high heat.'
+  },
+  'salmon-chowder-w': {
+    title: 'Salmon Chowder',
+    time: '2 hours',
+    servings: '4 servings',
+    difficulty: 'High',
+    ingredients: ['1 salmon carcass, 1L water, 1 bay leaf','2 tbsp fat, 1 large onion, 4 garlic cloves','4 parsnips + 3 carrots + 2 celery ribs (all chopped)','1 tbsp apple cider vinegar, 1 tbsp thyme, 1½ tsp salt','700g salmon fillet, cubed','1 cup coconut milk','½ lemon','3 spring onions'],
+    steps: ['Simmer salmon carcass with water and bay leaf for 1 hour. Strain.','Sauté onion and garlic 5 minutes. Add root vegetables, cook 5 minutes.','Add broth, vinegar, thyme, salt. Simmer 30 minutes.','Blend 2 cups of soup until smooth; return to pot.','Add salmon and coconut milk. Cook 8 minutes.','Finish with lemon juice. Serve with spring onions.'],
+    notes: 'In winter, the root vegetables are at their best — the parsnip and carrot give the chowder a natural sweetness. Use blood orange instead of lemon for a more seasonal flavour.'
+  },
+  'spicy-cod-sheet': {
+    title: 'Spicy Cod & Veg Sheet Pan',
+    time: '20 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['Marinade: 3 tbsp lemon juice, ½ cup avocado oil, 1 tsp sesame oil, 2 garlic cloves minced, 1 tbsp coconut aminos, ½ tsp salt, ¼ tsp pepper','4 cod fillets (about 600g total)','600g broccoli florets','1 small red chilli, sliced','Fresh coriander or parsley to serve'],
+    steps: ['Combine all marinade ingredients. Marinate cod fillets for 30 minutes.','Preheat oven to 180°C fan.','Toss broccoli in a little oil and spread on a large baking tray. Roast 10–12 minutes.','Add marinated fish fillets and sliced chilli to the tray alongside the broccoli. Roast 7–10 more minutes until fish is opaque and flakes easily.','Garnish with fresh herbs and serve immediately.'],
+    notes: 'Cod is a lean white fish — high protein, very mild flavour. The sesame-coconut marinade gives it character. Do not marinate longer than 30 minutes — the acid begins to "cook" the fish.'
+  },
+  'shrimp-stirfry': {
+    title: 'Shrimp and Green Bean Stir-Fry',
+    time: '10 minutes',
+    servings: '3 servings',
+    difficulty: 'Medium',
+    ingredients: ['2 tbsp solid cooking fat','½ onion, thinly sliced','4 garlic cloves, minced','2-inch ginger, minced','900g green beans, halved','1 cup sliced crimini mushrooms','2 tbsp coconut aminos','1 tsp honey','450g raw shrimp (tails on)','¼ tsp sea salt','Fresh parsley'],
+    steps: ['Heat fat in a wok over high heat. Sauté onion and garlic for 5 minutes. Add ginger, cook 1 minute.','Add green beans and mushrooms; cook 10 minutes until beans are just tender.','Add coconut aminos, honey, and shrimp. Cook 3–4 minutes until shrimp is pink.','Season with salt. Garnish with parsley and serve.'],
+    notes: 'Crimini mushrooms (also called chestnut mushrooms) have more flavour than white button mushrooms. This stir-fry is very quick — all the preparation should be done before the wok gets hot.'
+  },
+  'sear-halibut': {
+    title: 'Sear-Roasted Halibut',
+    time: '15 minutes',
+    servings: '2 servings',
+    difficulty: 'Medium',
+    ingredients: ['½ orange, juiced','2 tbsp coconut aminos','½ lemon, juiced','¼ tsp ginger powder','¼ tsp sea salt','2 tbsp coconut flour','340g halibut (skinned, in 2 portions)','2 tbsp coconut oil','Fresh chives, chopped'],
+    steps: ['Preheat oven to 200°C (400°F).','Combine orange juice, coconut aminos, lemon juice, and ginger in a small bowl. Set aside.','Mix remaining salt with coconut flour. Lightly dredge the halibut in the flour.','Heat coconut oil in an oven-safe pan until very hot. Sear halibut 2 minutes until golden. Flip.','Transfer pan to oven and bake 3–5 minutes until fish is opaque and flakes easily.','Serve with the citrus sauce spooned over. Garnish with chives.'],
+    notes: 'Halibut is a firm, meaty white fish — perfect for this technique. The coconut flour crust crisps beautifully. If your pan is not oven-safe, transfer the fish to a baking tray after searing.'
+  },
+  'roast-brussels': {
+    title: 'Roast Brussels Sprouts on Barley',
+    time: '45 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['250g pearl barley','2 bay leaves','1 lemon, halved','450g Brussels sprouts, halved','3 tbsp olive oil','2 tsp ground cumin','1 tsp ground coriander','¼–½ tsp sea salt','35g blanched hazelnuts','20g flat-leaf parsley','6 Medjool dates','Tahini Lemon Yoghurt: 150g yoghurt, 30g tahini, zest and juice of ½ lemon, pinch salt, ½ garlic clove'],
+    steps: ['Boil barley with bay leaves and lemon half for 20–25 minutes. Drain and refresh under cold water.','Preheat oven to 200°C. Toss halved sprouts with oil, cumin, coriander, and salt. Spread on a tray and roast 25–30 minutes until caramelised.','Toast hazelnuts in a dry pan then roughly crush.','Make tahini yoghurt: whisk all ingredients together.','Spread yoghurt on a platter. Top with barley, sprouts, hazelnuts, parsley, and halved dates.'],
+    notes: 'This is a complete vegetarian meal that hits many vegetable targets. The dates provide just enough sweetness to balance the bitter sprouts. The tahini yoghurt anchors the dish.'
+  },
+  'mushroom-rice': {
+    title: 'Mushroom + Rosemary Wild Rice',
+    time: '25 minutes',
+    servings: '4 servings',
+    difficulty: 'Easy',
+    ingredients: ['300g wild rice','Vegetable or chicken stock (optional)','200g kale','2 tbsp olive oil','¼ tsp sea salt','40g blanched hazelnuts','150g mixed mushrooms','3–4 rosemary sprigs (15g)','3 garlic cloves, crushed','30g dried cranberries or sour cherries','Zest and juice of 1 lemon'],
+    steps: ['Preheat oven to 180°C. Roast wild rice on a tray with stock (if using) for 18–20 minutes.','Add washed kale (stems discarded) to the rice tray for the last 7 minutes.','Toast hazelnuts then crush roughly. Fry mushrooms with rosemary and garlic in olive oil for 5–6 minutes until golden.','Toss mushrooms and kale through the rice. Add cranberries, lemon juice and zest, and hazelnuts.'],
+    notes: 'Roasting the wild rice in the oven gives it a toasted, nutty flavour you cannot achieve by boiling. Wild rice is not actually rice — it is a grass seed, and much higher in protein than white rice.'
+  }
+};
+
+function toggleSeason(season, btn) {
+  const pages = document.getElementById(season + '-pages');
+  btn.classList.toggle('open');
+  pages.classList.toggle('open');
+}
+
+function showPage(pageId) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId);
+  if (target) { target.classList.add('active'); }
+  document.querySelectorAll('.page-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.season-toggle').forEach(t => t.classList.remove('active'));
+  window.scrollTo(0, 0);
+}
+
+function openSeason(season, page) {
+  const btn = document.querySelector('.season-toggle.' + season);
+  const pages = document.getElementById(season + '-pages');
+  if (btn && !pages.classList.contains('open')) {
+    btn.classList.add('open');
+    pages.classList.add('open');
+  }
+  showPage(page);
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+function showRecipe(season, recipeId) {
+  const recipe = recipeData[recipeId];
+  if (!recipe) return;
+  const detail = document.getElementById(season + '-recipe-detail');
+  const content = document.getElementById(season + '-recipe-content');
+  const list = document.getElementById(season + '-recipe-list');
+  content.innerHTML = `
+    <div class="recipe-detail-title">${recipe.title}</div>
+    <div class="recipe-info-row">
+      <span>⏱ ${recipe.time}</span>
+      <span>👤 ${recipe.servings}</span>
+      <span>📊 ${recipe.difficulty || 'Easy'}</span>
+    </div>
+    <div class="recipe-cols">
+      <div>
+        <div class="section-label">Ingredients</div>
+        <ul class="ingredients-list">
+          ${recipe.ingredients.map(i => `<li>${i}</li>`).join('')}
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Method</div>
+        <ol class="steps-list">
+          ${recipe.steps.map(s => `<li>${s}</li>`).join('')}
+        </ol>
+        ${recipe.notes ? `<div class="callout callout-tip" style="margin-top:1.5rem;"><span class="callout-icon">💡</span><div>${recipe.notes}</div></div>` : ''}
+      </div>
+    </div>
+  `;
+  detail.classList.add('open');
+  list.style.display = 'none';
+}
+
+function closeRecipeDetail(season) {
+  document.getElementById(season + '-recipe-detail').classList.remove('open');
+  document.getElementById(season + '-recipe-list').style.display = 'block';
+}
+</script>
+</body>
+</html>
