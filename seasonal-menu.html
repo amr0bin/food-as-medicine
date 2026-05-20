@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seasonal Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ASAP:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sidebar-w: 260px;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f6fbf4;
+  --border: #d4e8cc;
+  --border-soft: #e8f4e4;
+  --text: #1a2e1a;
+  --muted: #5a7a58;
+  --font: 'ASAP', system-ui, sans-serif;
+
+  /* Season accents */
+  --winter-accent: #4a90c4;
+  --winter-soft: #e8f3fb;
+  --spring-accent: #6bb86b;
+  --spring-soft: #eef8ee;
+  --summer-accent: #f4c430;
+  --summer-soft: #fdf8e1;
+  --fall-accent: #e8a0b4;
+  --fall-soft: #fdf0f4;
+
+  --accent: #4a90c4;
+  --accent-soft: #e8f3fb;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* ── Leaf pattern background ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cellipse cx='60' cy='30' rx='12' ry='22' fill='%23216a21' transform='rotate(-20 60 30)'/%3E%3Cellipse cx='85' cy='75' rx='10' ry='18' fill='%23216a21' transform='rotate(30 85 75)'/%3E%3Cellipse cx='30' cy='80' rx='9' ry='16' fill='%23216a21' transform='rotate(-40 30 80)'/%3E%3Cellipse cx='20' cy='20' rx='7' ry='13' fill='%23216a21' transform='rotate(15 20 20)'/%3E%3Cellipse cx='100' cy='25' rx='8' ry='15' fill='%23216a21' transform='rotate(-30 100 25)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: #fff;
+  border-right: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 28px 22px 22px;
+  border-bottom: 1.5px solid var(--border);
+  background: linear-gradient(160deg, #f0f9ee 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-header::after {
+  content: '🌿';
+  position: absolute;
+  right: -6px; bottom: -8px;
+  font-size: 52px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.sidebar-logo {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.sidebar-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.sidebar-nav { flex: 1; padding: 10px 0 20px; }
+
+.season-group { margin-bottom: 1px; }
+
+.season-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: left;
+  transition: color 0.15s, background 0.15s;
+  gap: 8px;
+}
+
+.season-btn:hover { background: var(--surface2); color: var(--text); }
+.season-btn.active { color: var(--accent); }
+
+.chevron {
+  transition: transform 0.2s;
+  font-style: normal;
+  font-size: 10px;
+  opacity: 0.6;
+}
+.season-btn.open .chevron { transform: rotate(90deg); }
+
+.s-icon { font-size: 16px; margin-right: 2px; }
+
+.sub-nav { display: none; flex-direction: column; padding-bottom: 6px; }
+.sub-nav.open { display: flex; }
+
+.sub-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 22px 7px 44px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--muted);
+  text-align: left;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.sub-btn:hover { background: var(--accent-soft); color: var(--text); }
+.sub-btn.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 500;
+}
+
+.sidebar-footer {
+  padding: 14px 22px;
+  border-top: 1.5px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  background: #f6fbf4;
+}
+
+/* ── Main ── */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.page-header {
+  padding: 36px 52px 28px;
+  border-bottom: 1.5px solid var(--border);
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 200px;
+  background: linear-gradient(to left, var(--accent-soft), transparent);
+  pointer-events: none;
+}
+
+.page-header-nature {
+  position: absolute;
+  right: 20px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 72px;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.season-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: white;
+  padding: 3px 12px;
+  border-radius: 99px;
+  margin-bottom: 10px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.15;
+  position: relative;
+  z-index: 1;
+}
+
+.page-period {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.content { padding: 36px 52px 60px; max-width: 900px; }
+
+/* ── Section ── */
+.section { margin-bottom: 44px; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1.5px;
+  background: var(--border);
+  border-radius: 1px;
+}
+
+/* ── Schedule ── */
+.schedule-grid { display: flex; flex-direction: column; gap: 3px; }
+
+.schedule-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.schedule-row:hover { border-color: var(--accent); }
+
+.schedule-time {
+  padding: 14px 14px;
+  background: var(--surface2);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  display: flex;
+  align-items: flex-start;
+  border-right: 1.5px solid var(--border);
+  line-height: 1.4;
+}
+
+.schedule-body { padding: 14px 20px; }
+
+.schedule-meal {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.schedule-items { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.schedule-items li {
+  font-size: 13px;
+  color: #4a6648;
+  padding-left: 16px;
+  position: relative;
+}
+.schedule-items li::before {
+  content: '·';
+  position: absolute; left: 4px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  border: 1.5px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--accent-soft);
+}
+
+.activity-label {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: transparent;
+  border-right: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+}
+
+.activity-text {
+  padding: 10px 20px;
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Guidelines box ── */
+.guideline-box {
+  background: linear-gradient(135deg, #f6fbf4 0%, #eef8f0 100%);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+.guideline-items { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.guideline-items li {
+  font-size: 13px;
+  color: var(--text);
+  padding-left: 20px;
+  position: relative;
+}
+.guideline-items li::before {
+  content: '🌱';
+  position: absolute; left: 0;
+  font-size: 12px;
+}
+
+/* ── Shopping list ── */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.shop-category {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.shop-category-header {
+  padding: 10px 16px;
+  background: var(--surface2);
+  border-bottom: 1.5px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shop-items { padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; }
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+.shop-item input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+.shop-item.checked span { text-decoration: line-through; color: var(--muted); }
+.shop-note { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+/* ── Prep ── */
+.prep-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+}
+.progress-bar { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.35s ease; }
+.progress-label { font-size: 12px; color: var(--muted); white-space: nowrap; font-weight: 500; }
+
+.prep-day { margin-bottom: 28px; }
+.prep-day-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.prep-tasks { display: flex; flex-direction: column; gap: 6px; }
+
+.prep-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s, border-color 0.15s;
+}
+.prep-task:hover { background: var(--accent-soft); border-color: var(--accent); }
+.prep-task input[type="checkbox"] { accent-color: var(--accent); margin-top: 2px; flex-shrink: 0; }
+.prep-task.checked .task-text { text-decoration: line-through; color: var(--muted); }
+.task-text { flex: 1; }
+.task-meta { font-size: 11px; color: var(--muted); white-space: nowrap; margin-top: 2px; }
+
+/* ── Recipes ── */
+.recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+
+.recipe-card {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.recipe-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.recipe-card-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+.recipe-card-meta { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.recipe-card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-size: 11px; padding: 3px 9px; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent);
+  font-weight: 500;
+}
+
+.empty-state {
+  padding: 44px 24px; text-align: center;
+  border: 2px dashed var(--border); border-radius: 10px; background: #fafafa;
+}
+.empty-icon { font-size: 36px; margin-bottom: 12px; }
+.empty-title { font-size: 17px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+.empty-hint { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.empty-hint code { background: var(--surface2); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+
+/* ── Snacks ── */
+.snack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.snack-pill {
+  padding: 10px 14px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.snack-pill span { font-size: 16px; }
+
+/* ── Page visibility ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Season themes ── */
+body.winter { --accent: #4a90c4; --accent-soft: #e8f3fb; }
+body.spring { --accent: #4a9e4a; --accent-soft: #edf7ed; }
+body.summer { --accent: #c8a010; --accent-soft: #fdf7dc; }
+body.fall   { --accent: #c9607a; --accent-soft: #fdeef2; }
+</style>
+</head>
+<body class="winter">
+
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Menu · Vancouver</div>
+    <div class="sidebar-title">Seasonal Eating</div>
+    <div class="sidebar-sub">3-month rotations · 2026</div>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <div class="season-group">
+      <button class="season-btn open active" onclick="toggleSeason('winter',this)">
+        <span><span class="s-icon">❄️</span> Winter</span>
+        <span class="chevron">›</span>
+      </button>
+      <div class="sub-nav open" id="winter-sub">
+        <button class="sub-btn active" onclick="showPage('winter','menu',this)">Daily menu</button>
+        <button class="sub-btn" onclick="showPage('winter','prep',this)">Weekly prep</button>
+        <button class="sub-btn" onclick="showPage('winter','shop',this)">Shopping list</button>
+        <button class="sub-btn" onclick="showPage('winter','recipes',this)">Recipes</button>
+      </div>
+    </div>
+
+    <div class="season-group">
+      <button class="season-btn" onclick="toggleSeason('spring',this)">
+        <span><span class="s-icon">🌿</span> Spring</span>
+        <span class="chevron">›</span>
+      </button>
+      <div class="sub-nav" id="spring-sub">
+        <button class="sub-btn" onclick="showPage('spring','menu',this)">Daily menu</button>
+        <button class="sub-btn" onclick="showPage('spring','prep',this)">Weekly prep</button>
+        <button class="sub-btn" onclick="showPage('spring','shop',this)">Shopping list</button>
+        <button class="sub-btn" onclick="showPage('spring','recipes',this)">Recipes</button>
+      </div>
+    </div>
+
+    <div class="season-group">
+      <button class="season-btn" onclick="toggleSeason('summer',this)">
+        <span><span class="s-icon">☀️</span> Summer</span>
+        <span class="chevron">›</span>
+      </button>
+      <div class="sub-nav" id="summer-sub">
+        <button class="sub-btn" onclick="showPage('summer','menu',this)">Daily menu</button>
+        <button class="sub-btn" onclick="showPage('summer','prep',this)">Weekly prep</button>
+        <button class="sub-btn" onclick="showPage('summer','shop',this)">Shopping list</button>
+        <button class="sub-btn" onclick="showPage('summer','recipes',this)">Recipes</button>
+      </div>
+    </div>
+
+    <div class="season-group">
+      <button class="season-btn" onclick="toggleSeason('fall',this)">
+        <span><span class="s-icon">🍂</span> Fall</span>
+        <span class="chevron">›</span>
+      </button>
+      <div class="sub-nav" id="fall-sub">
+        <button class="sub-btn" onclick="showPage('fall','menu',this)">Daily menu</button>
+        <button class="sub-btn" onclick="showPage('fall','prep',this)">Weekly prep</button>
+        <button class="sub-btn" onclick="showPage('fall','shop',this)">Shopping list</button>
+        <button class="sub-btn" onclick="showPage('fall','recipes',this)">Recipes</button>
+      </div>
+    </div>
+
+  </nav>
+    <div class="season-group">
+      <button class="season-btn" onclick="showPantry(this)">
+        <span><span class="season-icon">🫙</span> Pantry</span>
+      </button>
+    </div>
+
+
+  <div class="sidebar-footer">Jan–Mar &nbsp;·&nbsp; Apr–Jun &nbsp;·&nbsp; Jul–Sep &nbsp;·&nbsp; Oct–Dec</div>
+</aside>
+
+<main id="main">
+
+<!-- ════════════ WINTER MENU ════════════ -->
+<div id="page-winter-menu" class="page active">
+  <div class="page-header">
+    <div class="page-header-nature">🌲</div>
+    <div class="season-pill">❄️ Winter · Jan – Mar</div>
+    <div class="page-title">Daily Menu</div>
+    <div class="page-period">3-month rotation · repeat weekly · all recipes from your collection</div>
+  </div>
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">Daily guidelines</div>
+      <div class="guideline-box">
+        <ul class="guideline-items">
+          <li>Avoid ultra-processed foods, cow dairy, gluten, and sugar · sheep/goat dairy permitted</li>
+          <li>Keep carbs under 20–30 g daily · minimum 180 g protein daily · minimum 30 veg types weekly</li>
+          <li>3 cups leafy greens + 3 cups sulfur-rich + 3 cups brightly coloured at every meal</li>
+          <li>Eating window 5:30 AM – 3:00 PM (flexible for evening plans) · protein within 30 min of waking</li>
+          <li>Move after every meal · minimum 2 litres water daily</li>
+          <li>⚠️ Garlic: current migraine trigger — use garlic-infused oil, asafoetida, or omit. Assess as you go.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Weekly protein anchors — set on Saturday</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 1</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Venison/Bison Winter Breakfast Patties — batch Saturday, freeze half</div>
+            <ul class="schedule-items">
+              <li>Ground venison or bison · red onion · mushroom · parsley · rosemary · juniper · smoked paprika</li>
+              <li>Form 12 patties, cook half in coconut oil 4–5 min per side, freeze remainder individually</li>
+              <li>→ Full recipe in Winter Recipes section</li>
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 2</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Garlic, Thyme + Spring Onion Roast Chicken — Sunday, strips Mon–Wed</div>
+            <ul class="schedule-items">
+              <li>1.6 kg whole chicken · spring onion trivet · thyme · lemon · garlic-infused oil ⚠️ · 65 min at 200°C</li>
+              <li>Rest 10 min, strip while warm, portion into 3 day servings, refrigerate</li>
+              <li>→ Full recipe in Winter Recipes section</li>
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 3</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Marinated Salmon (Coconut Amino) — marinate Saturday, bake Wednesday</div>
+            <ul class="schedule-items">
+              <li>Wild salmon fillets · coconut aminos · lemon · thyme · ginger powder · sea salt</li>
+              <li>Marinate overnight in fridge · bake skin-side down at 200°C for 12–15 min Wednesday</li>
+              <li>→ Full recipe in Winter Recipes section</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">What's in season — ❄️ Winter · Jan – Mar</div>
+      <div class="guideline-box"><ul class="guideline-items">
+        <li><strong>Hearty greens + cabbage:</strong> Swiss chard, kale, cavolo nero, Savoy cabbage — all peak winter. Wilt in coconut oil for breakfast skillet. Savoy Cabbage, Herby Sausage + Garlic Croutons is a standout feast menus dish.</li>
+        <li><strong>Winter citrus:</strong> blood oranges (Blood Orange, Lentil + Fennel is peak winter), grapefruit (Hot Smoked Salmon + Avocado + Grapefruit), pomegranate. "Winter oranges bring a welcome injection of colour into grey lunchtimes."</li>
+        <li><strong>Root vegetables:</strong> beets, parsnips, carrots, rutabaga — all sweeter after frost. Rainbow Roasted Root Vegetables and Rosemary-Roasted Carrots + Parsnips are the batch Saturday staples.</li>
+        <li><strong>Winter squash:</strong> any variety works for Cinnamon-Scented Butternut Squash (½ cup limit per serving)</li>
+        <li><strong>Warming soups:</strong> Classic Chicken Soup · Salmon Chowder (parsnips halved) · Under the Weather Soup (bone broth + sweet potato) — all restorative and protein-rich</li>
+        <li><strong>Holiday season:</strong> Radicchio, Stilton + Pear for the period between Christmas and New Year · Apple-Cranberry Crumble for holiday guests</li>
+      </ul></div>
+    </div>
+    <div class="section">
+      <div class="section-label">5:00 AM — Pre-workout</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Weekdays</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">3 hard-boiled eggs + avocado</div>
+            <ul class="schedule-items">
+              <li>3 hard-boiled eggs (batched Saturday — grab and go from fridge)</li>
+              <li>½ avocado with sea salt flakes and squeeze of lemon</li>
+              <li>Water with creatine · matcha or herbal tea</li>
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Weekends</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Special breakfast options</div>
+            <ul class="schedule-items">
+              <li>Smoked Salmon + Egg Plate — smoked salmon, poached eggs, capers, dill, red onion, lemon</li>
+              <li>Golden Egg Skillet — eggs baked over chard, zucchini, spring onions, turmeric, Pecorino</li>
+              <li>Greek Breakfast Power Bowl — eggs, halloumi, zucchini, eggplant, olives, lemon</li>
+              <li>→ Full recipes in Winter Recipes section</li>
+            </ul>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="activity-label">Move</div>
+          <div class="activity-text">Morning workout · then walk outside for early sun exposure with tea</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Post-workout — Breakfast skillet (critical — sets the day)</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Every day</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Venison/bison patties + seasonal veg · ~60 g protein · under 10 min assembly</div>
+            <ul class="schedule-items">
+              <li>2–3 winter patties (rosemary, juniper, smoked paprika) · warm in coconut oil 2–3 min per side from fridge</li>
+              <li>3 cups leafy greens — Swiss chard or kale from Sautéed Market Greens (pre-made) or wilt fresh in same pan</li>
+              <li>3 cups sulfur-rich veg — pre-roasted Brussels sprouts, cabbage, or mushrooms from fridge, warm through 2 min</li>
+              <li>3 cups brightly coloured veg — pre-roasted beets, red cabbage, or carrots from Rainbow Roasted Root Veg, warm through</li>
+              <li>Kimchi or sauerkraut alongside · bone broth with salt, lemon, and collagen</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Lunch — 11:30 AM</div>
+      <div class="schedule-grid">
+        <div class="activity-row">
+          <div class="activity-label">Walk</div>
+          <div class="activity-text">Walking meditation in nature · water or tea · birdwatching if possible</div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Mon–Wed</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Stripped roast chicken over Emerald Kale Salad · ~46 g protein</div>
+            <ul class="schedule-items">
+              <li>Chicken strips from Sunday roast over Emerald Kale Salad (pre-massaged from fridge)</li>
+              <li>Dressing: Caesar (coconut/anchovy) or Apple Cider Vinaigrette · roasted pumpkin seeds for crunch</li>
+              <li>3 cups each: leafy greens · brightly coloured veg · sulfur-rich veg from batch cook</li>
+              <li>Water and tea</li>
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Thu–Sat</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Flaked salmon over Radish + Jicama Tabbouli · ~40 g protein</div>
+            <ul class="schedule-items">
+              <li>Wednesday-baked salmon, flaked over Radish + Jicama Tabbouli (grain-free tabbouleh)</li>
+              <li>Dressing: Ginger Plum Vinaigrette · toasted seed mix from Saturday jar</li>
+              <li>3 cups each: leafy greens · brightly coloured veg · sulfur-rich veg</li>
+            </ul>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="activity-label">2–4 PM</div>
+          <div class="activity-text">Vigorous exercise on weekdays · 45–90 min · complete stress cycles</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Dinner</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Mon + Wed</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Lamb Meatballs with Garlic + Spinach · ~50 g protein</div>
+            <ul class="schedule-items">
+              <li>Ground lamb meatballs (kalamata olives, lemon zest, cinnamon) · garlic-infused oil ⚠️ · bone broth</li>
+              <li>Wilted baby spinach · drizzle of lemon juice · 3 cups each veg as per guidelines</li>
+              <li>→ Full recipe in Winter Recipes section</li>
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Tue + Thu</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Remaining chicken or Mediterranean Salmon · ~40–46 g protein</div>
+            <ul class="schedule-items">
+              <li>Tuesday: remaining roast chicken · cucumber salad with rice vinegar, sesame oil, red onion</li>
+              <li>Thursday: Mediterranean Salmon (kalamata olives, parsley, lemon) or grilled mackerel</li>
+              <li>3 cups each: leafy greens · sulfur-rich · brightly coloured veg · chamomile tea to wind down</li>
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Fri–Sat</div>
+          <div class="schedule-body">
+            <div class="schedule-meal">Baked salmon or mackerel + Warm Dill Lentils · ~40–50 g protein</div>
+            <ul class="schedule-items">
+              <li>Grilled Black Pepper + Lemon Mackerel or remaining salmon fillet</li>
+              <li>Warm Dill Lentils with Cumin Spinach (¼ cup lentils per serving) · sheep's yoghurt swirl</li>
+              <li>3 cups each: leafy greens · sulfur-rich · brightly coloured veg · chamomile and lemon tea</li>
+            </ul>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="activity-label">8:00 PM</div>
+          <div class="activity-text">Slow walk · bath · meditation · reading · rest</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Snacks · 5 AM – 3 PM as needed</div>
+      <div class="snack-grid">
+        <div class="snack-pill"><span>🌊</span> Dried seaweed</div>
+        <div class="snack-pill"><span>🥜</span> Nuts and seeds</div>
+        <div class="snack-pill"><span>🫐</span> Dehydrated berries</div>
+        <div class="snack-pill"><span>🥒</span> Liver pâté + cucumber</div>
+        <div class="snack-pill"><span>🥑</span> Blueberry greens smoothie</div>
+        <div class="snack-pill"><span>🥕</span> Crudités + Caesar dressing</div>
+        <div class="snack-pill"><span>🍫</span> Very dark chocolate 85%+</div>
+        <div class="snack-pill"><span>🐟</span> Salmon jerky</div>
+        <div class="snack-pill"><span>🍊</span> Blood orange or citrus</div>
+        <div class="snack-pill"><span>🫧</span> Kombucha</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Winter dressings — make Saturday, use all week</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Dressing 1</div>
+          <div class="schedule-body" style="display:flex;align-items:center"><span style="font-size:13px;color:var(--muted)"><strong>Caesar</strong> — coconut milk, anchovies, EVOO, lemon · for salads (Mon–Wed) and crudités</span></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Dressing 2</div>
+          <div class="schedule-body" style="display:flex;align-items:center"><span style="font-size:13px;color:var(--muted)"><strong>Ginger Plum Vinaigrette</strong> — EVOO, ume plum vinegar, lemon, ginger · for fish days (Thu–Sat)</span></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Salad kit</div>
+          <div class="schedule-body" style="display:flex;align-items:center"><span style="font-size:13px;color:var(--muted)"><strong>Toasted seed mix</strong> (pumpkin + sunflower + sesame) in a jar · <strong>Quick pickles</strong> (red onion + radish) ready in jar · add to every salad</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<div id="page-winter-recipes" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🌲</div>
+    <div class="season-pill">❄️ Winter · Jan – Mar</div>
+    <div class="page-title">Winter Recipes</div>
+    <div class="page-period">All adapted to your guidelines · garlic tagged throughout</div>
+  </div>
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">🔒 Protein anchors — every week</div>
+      <div class="recipe-grid">
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Winter Breakfast Patties</div>
+          <div class="recipe-card-meta">Venison or bison · batch Saturday · makes 12 · freeze half</div>
+          <div class="recipe-card-tags"><span class="tag">🔒 Daily anchor</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            700 g ground venison or bison · ½ red onion, finely diced · 100 g mushrooms, finely chopped · 2 tbsp fresh parsley · 1 tbsp rosemary · ½ tsp crushed juniper berries · 1 tsp smoked paprika · 1 tsp sea salt · coconut oil to cook
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Combine all ingredients gently — don't overwork. Form into 12 patties (~80 g each), press a small indent in the centre. Cook in coconut oil over medium heat, 4–5 min per side until browned through. Cool completely, refrigerate week supply, freeze remainder individually.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Garlic, Thyme + Spring Onion Roast Chicken</div>
+          <div class="recipe-card-meta">1 × 1.6 kg whole chicken · Sunday roast · strips Mon–Wed · serves 4</div>
+          <div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            10 spring onions · 1½ tbsp olive oil · 1 × 1.6 kg chicken (out of fridge 15 min) · 1 lemon, halved · small bunch thyme · 1 tbsp sea salt flakes · ½ tsp cracked black pepper
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">⚠️ Garlic adaptation</b>
+            Replace the garlic bulb with garlic-infused EVOO brushed over the skin. Add extra thyme + lemon zest + a pinch of asafoetida inside cavity for depth. Roast at 200°C for 65 min. Rest 10 min minimum, then strip and portion into 3 days.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Marinated Salmon — Coconut Amino</div>
+          <div class="recipe-card-meta">4 × 150 g wild salmon fillets · marinate Saturday · bake Wednesday · serves 4</div>
+          <div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Winter marinade</b>
+            ⅓ cup coconut aminos · juice of 1 lemon · 1 tbsp fresh thyme · ½ tsp ginger powder · sea salt. Marinate salmon overnight in fridge. Bake skin-side down at 200°C for 12–15 min. Flake into salads or serve alongside roasted veg.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Mediterranean Salmon</div>
+          <div class="recipe-card-meta">1½ lbs wild salmon · 40 min · serves 4</div>
+          <div class="recipe-card-tags"><span class="tag">Fish variation</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            1 tbsp coconut oil · 1½ lbs wild-caught salmon · ½ cup kalamata olives, pitted and minced · ¼ cup fresh parsley, chopped · ½ lemon, juiced · ¼ tsp sea salt · 3 tbsp EVOO
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Preheat 200°C. Spread coconut oil on a baking sheet. Combine olives, parsley, lemon, salt — spread over fillet. Bake 15 min or until fish flakes easily. Drizzle EVOO before serving.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Grilled Black Pepper + Lemon Mackerel</div>
+          <div class="recipe-card-meta">4 small whole mackerel · 10 min · serves 4</div>
+          <div class="recipe-card-tags"><span class="tag">Fish backup</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients + method</b>
+            2 lemons · 4 small mackerel (gutted, cleaned) · 2 tbsp olive oil · 1 tsp sea salt flakes · 2 tsp cracked black pepper.
+            Preheat grill to high. Score fish 3× each side. Slice lemons thinly, stuff into cavity. Rub oil + salt + pepper inside and outside. Grill 5 min, flip, grill 5 more min until skin is crispy and charred and flesh is soft to touch.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Lamb Meatballs with Garlic + Spinach</div>
+          <div class="recipe-card-meta">Ground lamb · 30 min · serves 3–4 · dinner backup</div>
+          <div class="recipe-card-tags"><span class="tag">Dinner backup</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            6 kalamata olives, minced · 3 cloves garlic, minced → use garlic-infused oil · ½ tsp lemon zest · ½ tsp cinnamon · ½ tsp sea salt · 1 lb ground lamb · 2 tbsp coconut oil · ½ cup bone broth · 4 cups baby spinach · ½ lemon, juiced
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Combine olives, lemon zest, cinnamon, salt in bowl. Mix in lamb, form 1-inch meatballs. Sear in coconut oil over high heat until browned all sides. Add bone broth, cover, cook 5–6 min. Add spinach, stir until wilted. Drizzle lemon juice and serve.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">🥚 Egg recipes — pre-workout + weekends</div>
+      <div class="recipe-grid">
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Golden Egg Skillet</div>
+          <div class="recipe-card-meta">4 eggs · 10–15 min · serves 2 · post-workout or weekend</div>
+          <div class="recipe-card-tags"><span class="tag">Egg recipe</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            2 tbsp avocado oil or ghee · 2 medium spring onions, white and green parts sliced · 1 clove garlic → use infused oil · 3.5 oz (100 g) Swiss chard or collard greens, stalks and leaves separated, sliced · 1 medium zucchini, sliced · 2 tbsp water · ½ tsp mustard · ½ tsp ground turmeric · ½ tsp black pepper · salt to taste · 4 large eggs · ¼ cup Manchego or Pecorino Romano (sheep's milk ✅)
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Preheat oven to 180°C fan / 200°C. Grease ovenproof skillet with oil. Cook spring onions and garlic-infused oil 1 min. Add chard stalks, zucchini, water. Stir in mustard, turmeric, pepper, salt until zucchini is just tender. Add chard leaves and cook until wilted. Make 4 wells, crack an egg into each. Top with cheese. Bake 5–7 min until whites are set.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Greek Breakfast Power Bowl</div>
+          <div class="recipe-card-meta">4 eggs · 20 min · serves 2 · weekend</div>
+          <div class="recipe-card-tags"><span class="tag">Weekend breakfast</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            3 tbsp avocado oil or ghee · 1 clove garlic → infused oil · 2 tsp fresh rosemary, chopped · 1 medium zucchini, roughly chopped · 1 medium (200 g) eggplant, roughly chopped · 3 tbsp lemon juice · 1½ tbsp fresh mint, chopped · salt and pepper · 70 g sheep's halloumi, sliced · ¼ cup kalamata olives · 4 large eggs, soft-boiled or poached · 1 tbsp EVOO to drizzle
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Heat skillet with oil. Add garlic-infused oil, zucchini, eggplant, cook 10–15 min until soft. Stir in lemon juice, mint, salt. Grease same pan medium-high, brown halloumi 2–3 min per side. Top veg with halloumi, olives, soft-boiled eggs. Drizzle EVOO. Serve warm.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Smoked Salmon + Egg Plate</div>
+          <div class="recipe-card-meta">Weekend special · 10 min · serves 1</div>
+          <div class="recipe-card-tags"><span class="tag">Weekend breakfast</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Assembly</b>
+            3 eggs (poached or soft-boiled) · 80 g hot-smoked or cured salmon · 1 tbsp capers · ½ small red onion, thinly sliced · fresh dill · squeeze of lemon · EVOO drizzle · sea salt flakes. Arrange on plate, squeeze lemon over everything and eat immediately.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">🥗 Winter salads + sides</div>
+      <div class="recipe-grid">
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Emerald Kale Salad</div>
+          <div class="recipe-card-meta">15 min · serves 4 · salad base all week</div>
+          <div class="recipe-card-tags"><span class="tag">Salad base</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            1 bunch curly-leafed kale, stemmed and finely chopped · 2 tbsp EVOO · 1 tsp sea salt · ½ lemon, juiced (1 tbsp) · ¼ cup minced red onion · ¼ cup finely chopped cucumber
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Place chopped kale in a large bowl. Drizzle with EVOO and sea salt. Massage gently with your hands for 5–10 minutes until the tough fibres break down and kale softens. Toss with red onion and cucumber. Keeps well in fridge for several days.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Blood Orange, Lentil + Fennel</div>
+          <div class="recipe-card-meta">15 min · serves 4 · lentils limited to ¼ cup per serving</div>
+          <div class="recipe-card-tags"><span class="tag">Winter salad</span><span class="tag" style="background:#fff8e1;color:#8a6200">🔄 Carb-limited</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            80 g blanched hazelnuts · 1 large fennel bulb, sliced thinly · 2 blood oranges, peeled and sliced · 2 × 390 g fine green lentils (use ¼ cup per serving max — bulk with extra fennel and rocket) · small bunch dill · 1–2 lemons · 3 tbsp EVOO · ½–1 tsp sea salt · 100 g Manchego (sheep's milk ✅) · 65 g wild rocket · sourdough optional (skip)
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Roast hazelnuts 8–9 min at 200°C until golden. Slice top and bottom off oranges, remove pith. Slice into horizontal rounds. Wash fennel under cold water. Combine all. Squeeze juice of 1 lemon, drizzle oil, toss gently. Scatter Manchego shavings and hazelnuts over.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Radish + Jicama Tabbouli</div>
+          <div class="recipe-card-meta">15 min · serves 4 · grain-free</div>
+          <div class="recipe-card-tags"><span class="tag">Side / salad</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Grain-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            1 bunch parsley, chopped · 1 bunch radishes, finely chopped · ½ lb jicama, peeled and finely chopped · 2 carrots, finely chopped · 1 cucumber, finely chopped · kalamata olives, minced · 1 tbsp minced fresh mint · ¼ cup EVOO · 2 tbsp apple cider vinegar · ½ lemon, juiced · sea salt to taste
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Combine parsley, radishes, jicama, carrots, cucumber and olives in a large bowl. In a small bowl whisk the olive oil, vinegar, lemon juice and salt. Toss dressing with the salad and serve. Keeps in fridge for several days.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Rainbow Roasted Root Vegetables</div>
+          <div class="recipe-card-meta">1 hour · serves 4 · batch Saturday</div>
+          <div class="recipe-card-tags"><span class="tag">Batch side</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            5 medium carrots, cut into 1-inch pieces · 3 medium beets, peeled and cut into 1-inch cubes · 3 medium parsnips, peeled and cut into 1-inch pieces · 1 small rutabaga, peeled and cut into 1-inch pieces · 3 tbsp coconut oil, melted · ½ tsp sea salt
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Preheat oven 200°C. Combine all vegetables, coat evenly with melted coconut oil and salt. Transfer to baking dish. Bake about 1 hour, stirring every 20 min, until soft and browned on the outside. Serve warm. Keeps 5 days refrigerated.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Sautéed Market Greens</div>
+          <div class="recipe-card-meta">20 min · serves 4</div>
+          <div class="recipe-card-tags"><span class="tag">Side</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Dairy-free</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            2 large bunches kale, chard, or collard greens, stemmed and roughly chopped · 2 tbsp coconut oil · 1 tsp sea salt
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Wash and dry greens thoroughly — not too wet before cooking. Heat coconut oil in a large skillet over medium heat. When fat is melted and pan is hot, add greens in batches, stirring as they cook. It's fine if they don't all fit at once — keep adding as others cook. Add salt and cook for about 15 minutes, turning, until tender. Serve warm.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Warm Dill Lentils with Cumin Spinach</div>
+          <div class="recipe-card-meta">25 min · serves 4 · ¼ cup lentils per serving max</div>
+          <div class="recipe-card-tags"><span class="tag">Hot side</span><span class="tag" style="background:#fff8e1;color:#8a6200">🔄 Carb-limited</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Ingredients</b>
+            2 onions · 3 tbsp EVOO · ¼–½ tsp sea salt · 2 cloves garlic → use garlic-infused oil · 3 tsp ground cumin · large bunch dill, roughly chopped · 2 × 390 g tin green lentils (¼ cup per serving) · 1 lemon · 3 tbsp sheep's milk yoghurt or coconut yoghurt
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Method</b>
+            Peel and slice onions into half-moons, as finely as possible. Put oil in a large frying pan then cook onion with salt over low heat for 8 min. Add garlic-infused oil and cumin and cook for 5–6 more min. Rinse spinach in cold water, drain, squeeze out excess. Add dill to the onion along with the drained lentils, increase heat. Squeeze in juice of half the lemon. Cover and steam 1 min. Swirl yoghurt over to serve.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">🥣 Winter dressings — make Saturday</div>
+      <div class="recipe-grid">
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Caesar Salad Dressing</div>
+          <div class="recipe-card-meta">5 min · yields 1 cup · dairy-free</div>
+          <div class="recipe-card-tags"><span class="tag">Dressing</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            ¼ cup coconut concentrate (softened in warm water bath) · ¼ cup filtered water or coconut milk · ½ cup EVOO · 2 anchovy fillets · 1 lemon, juiced · ¾ tsp sea salt. Blend on high until smooth. If too thick, add water 1 tbsp at a time. Keeps in fridge several days — warm slightly before using as it hardens when chilled.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Ginger Plum Vinaigrette</div>
+          <div class="recipe-card-meta">5 min · yields ¾ cup</div>
+          <div class="recipe-card-tags"><span class="tag">Dressing</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            ½ cup EVOO · 1 tbsp ume plum vinegar · 2 tbsp lemon juice · 1 tsp ginger powder. Whisk together in a small bowl and stir to incorporate. Keeps well in fridge for several days — shake or stir before using.
+          </div>
+        </div>
+
+        <div class="recipe-card">
+          <div class="recipe-card-name">Apple Cider Vinaigrette</div>
+          <div class="recipe-card-meta">5 min · yields ½ cup · use on everything</div>
+          <div class="recipe-card-tags"><span class="tag">Dressing</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            ½ cup EVOO · 2 tbsp apple cider vinegar · ¼ tsp ginger powder · ¼ tsp sea salt. Combine in a small bowl and whisk to incorporate. A great base vinaigrette — add berries, seasonal fruit, or fresh herbs to create your own versions.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">🎉 Monthly friends dinner — 3rd Saturday</div>
+      <div class="recipe-grid">
+        <div class="recipe-card">
+          <div class="recipe-card-name">Radicchio, Stilton + Pear</div>
+          <div class="recipe-card-meta">10 min · serves 4</div>
+          <div class="recipe-card-tags"><span class="tag" style="background:#fdeef3;color:#9a3055">🎉 Monthly dinner</span><span class="tag" style="background:#fff8e1;color:#8a6200">🔄 Dairy swap</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            100 g walnuts · 1 small radicchio · 2 white chicory heads · 2 firm pears · juice of 1 lemon · 2½ tbsp EVOO · 100 g Stilton → aged sheep's blue or crumbled Pecorino ✅ · 1 serving rye croutons (for guests). Toast walnuts 2–3 min in dry pan. Wash radicchio and chicory, pick leaves. Slice pears lengthwise, discard core, squeeze lemon over. Drizzle oil, crumble cheese, scatter walnuts. Toss gently and serve immediately.
+          </div>
+        </div>
+        <div class="recipe-card">
+          <div class="recipe-card-name">Pear-Caramel Pie</div>
+          <div class="recipe-card-meta">Coconut flour crust · 1 hr 30 min · serves 6 · celebration</div>
+          <div class="recipe-card-tags"><span class="tag" style="background:#fdeef3;color:#9a3055">🎉 Monthly dinner</span></div>
+          <div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Crust</b>1 cup coconut flour · 1 cup arrowroot flour · ¼ tsp sea salt · ½ cup coconut oil, cold · ½ cup cold filtered water · 1 tbsp coconut oil, melted
+            <b style="display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:6px;margin-bottom:4px">Filling</b>3 tbsp coconut oil · ¼ cup coconut sugar · 1 tsp cinnamon · ½ tsp sea salt · 1 tsp vanilla (optional) · 4 firm pears, halved and cored. Cook caramel 10 min until golden, blend with pear, fill crust, bake 35 min. A celebration dish — slim portion.
+          </div>
+        </div>
+      </div>
+    </div>
+        <div class="recipe-card"><div class="recipe-card-name">Classic Chicken Soup</div><div class="recipe-card-meta">Whole hen · 2 hrs · serves 6 · healing winter meal</div><div class="recipe-card-tags"><span class="tag">Warming soup</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">One 4–5 lb stewing hen or rooster · 1 large onion, chopped · 1 bay leaf · 2 cloves garlic → infused oil ⚠️ · 1 tbsp sea salt + more to taste · 6 large carrots, chopped · 4 ribs celery, chopped · 2 lbs green beans, chopped. Begin by cleaning the chicken (rinse under cold water and remove loose bits). Place in a large stockpot. Fill the pot with cold water until chicken is just covered. Bring to a boil, then cover tightly and lower heat to a bare simmer. Cook until meat is tender and falling off bone, about 1–2 hours. Remove chicken, pour broth through strainer, saving broth. Add broth back with carrots, celery, green beans. Bring to boil then simmer about 20 min. Remove chicken meat and add back to soup. Salt to taste. Keeps in fridge several days, also freezes well.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Salmon Chowder</div><div class="recipe-card-meta">Salmon + vegetables · 2 hrs · serves 6</div><div class="recipe-card-tags"><span class="tag">Warming soup</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 salmon carcass, bones, head and tail · 1 quart water · 1 bay leaf · 2 tbsp coconut oil · 1 large onion, chopped · 4 cloves garlic → infused oil ⚠️ · 4 parsnips, chopped (reduce by half to keep carbs lower) · 3 carrots, chopped · 2 ribs celery, chopped · 1 tbsp apple cider vinegar · 1½ tsp sea salt · 1 tsp dried thyme · 1½ lbs (680 g) salmon fillet, skin and bones removed, cut into 1½-inch chunks · 1 cup Creamy Coconut Milk · ½ lemon, juiced · 3 green onions, thinly sliced. Make broth: place salmon carcass in stockpot with water + bay leaf, simmer at lowest setting — essential to cook at lowest simmer possible. Remove carcass, strain broth. Cook onion in coconut oil until browned. Add garlic-infused oil and cook. Add parsnips, carrots, celery, thyme, salt, vinegar and broth. Bring to boil then simmer 30 min. Blend 2 cups without the carrots to make soup orange-ish. Add salmon chunks and coconut milk. Cook until piping hot (do not boil). Add lemon juice and serve garnished with green onions. Tastes best served fresh.</div></div>
+
+
+  </div>
+
+<div id="page-spring-menu" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🌸</div>
+    <div class="season-pill">🌿 Spring · Apr – Jun</div>
+    <div class="page-title">Daily Menu</div>
+    <div class="page-period">3-month rotation · repeat weekly</div>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-label">Weekly protein anchors</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 1</div>
+          <div class="schedule-body"><div class="schedule-meal">Breakfast patties — batch Saturday</div><ul class="schedule-items"><li>Bison + dill + lemon zest + mint · red onion · mushroom · parsley · sea salt</li><li>Form 12 · cook half · freeze half · reheat in skillet each morning</li></ul></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 2</div>
+          <div class="schedule-body"><div class="schedule-meal">Roast chicken — Sunday, strips Mon–Wed</div><ul class="schedule-items"><li>Harissa + Coriander (ghee sub for butter) · 65 min at 200°C · rest 10 min · strip and portion</li></ul></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 3</div>
+          <div class="schedule-body"><div class="schedule-meal">Fish — marinate Saturday, bake Wednesday</div><ul class="schedule-items"><li>Roast Lemon, Dill + Spring Onion Trout · Herb-Stuffed Trout · serves Thu–Sat</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">What's in season — 🌿 Spring · Apr – Jun</div>
+      <div class="guideline-box"><ul class="guideline-items">
+        <li><strong>Asparagus:</strong> Steak Salad Bowl with Asparagus + Avocado · Rosemary Grilled Asparagus · sub for orecchiette pasta (roasted asparagus tips + pine nuts in pesto)</li>
+        <li><strong>Peas + broad beans:</strong> Supergreen Tabbouleh · Spring Green Orecchiette → asparagus + pine nuts sub · add to any salad for colour and sweetness</li>
+        <li><strong>Spring onions / scallions:</strong> central to Roast Lemon Dill Trout · Supergreen Tabbouleh · Garlic Thyme Roast Chicken trivet · all breakfast skillets</li>
+        <li><strong>Radishes:</strong> Hot Smoked Salmon Avocado + Grapefruit · Radish + Jicama Tabbouli · quick-pickle for salad contrasts</li>
+        <li><strong>Rhubarb:</strong> Pickled Rhubarb + Sesame Beetroot — unique seasonal salad, thinly sliced and pickled in rice vinegar</li>
+        <li><strong>Fresh herbs at peak:</strong> dill, mint, tarragon, parsley, coriander — all key to spring patty variation and dressings</li>
+        <li><strong>Wild salmon:</strong> BC season opens — prioritise fresh over frozen this quarter</li>
+      </ul></div>
+    </div>
+    <div class="section">
+      <div class="section-label">Daily structure — same framework as winter</div>
+      <div class="schedule-grid">
+        <div class="schedule-row"><div class="schedule-time">5:00 AM</div><div class="schedule-body"><div class="schedule-meal">3 hard-boiled eggs + ½ avocado · water with creatine · matcha</div></div></div>
+        <div class="activity-row"><div class="activity-label">Move</div><div class="activity-text">Morning workout · walk outside for early sun exposure</div></div>
+        <div class="schedule-row"><div class="schedule-time">Post-workout</div><div class="schedule-body"><div class="schedule-meal">Patties + seasonal skillet · 60 g protein · 3×3 veg · bone broth · kimchi</div></div></div>
+        <div class="activity-row"><div class="activity-label">11:30 AM</div><div class="activity-text">Walking meditation · water or tea</div></div>
+        <div class="schedule-row"><div class="schedule-time">Lunch Mon–Wed</div><div class="schedule-body"><div class="schedule-meal">Stripped chicken over seasonal salad feast · Caesar or seasonal dressing · toasted seed mix</div></div></div>
+        <div class="schedule-row"><div class="schedule-time">Lunch Thu–Sat</div><div class="schedule-body"><div class="schedule-meal">Flaked fish over seasonal salad feast · Coconut-Basil Pesto · quick pickles</div></div></div>
+        <div class="activity-row"><div class="activity-label">2–4 PM</div><div class="activity-text">Vigorous exercise · 45–90 min · complete stress cycles</div></div>
+        <div class="schedule-row"><div class="schedule-time">Dinner</div><div class="schedule-body"><div class="schedule-meal">Backup protein: Rosemary-Mint Lamb Patties · seasonal salad feast · 3×3 veg · wind-down tea</div></div></div>
+        <div class="activity-row"><div class="activity-label">8:00 PM</div><div class="activity-text">Slow walk · bath · meditation · reading · rest</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">Seasonal dressings</div>
+      <div class="schedule-grid">
+        <div class="schedule-row"><div class="schedule-time">Make Saturday</div><div class="schedule-body" style="display:flex;align-items:center"><span style="font-size:13px;color:var(--muted)">Coconut-Basil Pesto · Apple Cider Vinaigrette · plus toasted seed mix in a jar · quick pickles ready</span></div></div>
+      </div>
+    </div>
+  </div>
+
+<div id="page-spring-recipes" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🌸</div>
+    <div class="season-pill">🌿 Spring · Apr – Jun</div>
+    <div class="page-title">Spring Recipes</div>
+    <div class="page-period">All adapted to your guidelines · garlic tagged throughout</div>
+  </div>
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">🔒 Protein anchors</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Spring Breakfast Patties</div><div class="recipe-card-meta">Bison + dill + lemon + mint · batch Saturday · makes 12</div><div class="recipe-card-tags"><span class="tag">🔒 Daily anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">700 g ground bison · ½ red onion · 100 g mushrooms · 2 tbsp dill · zest of 1 lemon · 1 tbsp mint · 1 tsp sea salt · coconut oil. Mix gently, form 12 patties (~80 g each), press indent in centre. Cook 4–5 min per side. Cool, fridge + freeze half.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Harissa Roast Chicken</div><div class="recipe-card-meta">Whole chicken · 65 min · strips Mon–Wed · serves 4</div><div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 leeks (trivet) · 1 × 1.6 kg chicken · 1 lemon · 70 g rose harissa · ghee instead of butter ✅ · large bunch coriander · 4 garlic cloves → infused oil ⚠️ · sea salt. Blend harissa, ghee, coriander, infused oil, squeeze of lemon — rub paste all over and under skin. Sit on leek trivet. Roast at 200°C, 65 min. Rest 10 min, strip, portion 3 days.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Roast Lemon, Dill + Spring Onion Trout</div><div class="recipe-card-meta">4 small whole trout · 20 min · serves 4</div><div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">4 small whole trout, gutted and cleaned · 2 tbsp olive oil · 2 lemons · 8 spring onions · small bunch (30 g) dill · 1 tsp sea salt flakes. Preheat 200°C. Rub ½ tbsp oil over a roasting tray. Slice lemons into 5 mm rounds. Trim spring onions, cut 2 cm from green tops. Divide lemon slices, spring onions and dill between the fish cavities. Rub remaining oil over, scatter salt. Roast 20 min until skin is crisp and flesh is soft to touch.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Herb-Stuffed Trout</div><div class="recipe-card-meta">2 whole trout · 30 min · serves 2</div><div class="recipe-card-tags"><span class="tag">Fish variation</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 tbsp coconut oil · 2 whole trout (~450 g each) · ½ tsp sea salt · 1 lemon, sliced into thin rounds · 4 large sprigs fresh rosemary · 4 large sprigs fresh thyme · kitchen twine. Preheat 230°C. Coat baking dish with fat. Sprinkle salt inside and outside fish. Fill cavity with lemon rounds and herb sprigs. Tie closed with twine to keep contents inside. Bake 15 min or until fish flakes easily when tested with a fork.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Hot Smoked Salmon, Avocado + Grapefruit</div><div class="recipe-card-meta">15 min · serves 4</div><div class="recipe-card-tags"><span class="tag">Fish salad</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 small red onion, finely sliced · 100 g radishes, finely sliced · juice of 1 lemon · ½ tsp sea salt · 2 tsp fennel seeds · 55 g sunflower seeds · 120 g rocket · 250 g hot smoked salmon, flaked · 2 ripe avocados, halved and stoned · 2 ruby grapefruits · 2½ tbsp EVOO. Squeeze onion and radishes in lemon juice and salt to lightly pickle. Toast fennel and sunflower seeds in a dry pan 2–3 min. Slice oranges. Roughly chop parsley. Add parsley, preserved lemons, salmon, avocados and grapefruit to pickled onion mixture including the pickling juice. Toss to combine, drizzle EVOO, scatter toasted seeds.</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">🥗 Spring salads + sides</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Rosemary Grilled Asparagus</div><div class="recipe-card-meta">30 min · serves 4</div><div class="recipe-card-tags"><span class="tag">Side</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 lbs asparagus, rinsed, ends trimmed · 2 tbsp coconut oil, melted · 1 tbsp minced fresh rosemary · ¼ tsp sea salt · ½ lemon for finishing. Preheat grill or grill pan. Coat asparagus evenly with fat, rosemary, and salt. Grill 10 min until soft, turning occasionally, removing thinner spears as they cook. Serve warm with a squeeze of fresh lemon juice.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Seared Broccolini with Coconut-Basil Pesto</div><div class="recipe-card-meta">30 min · serves 4</div><div class="recipe-card-tags"><span class="tag">Side</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 tbsp coconut oil · 4 cups broccolini, washed, ends trimmed · 4 cloves garlic → garlic-infused oil ⚠️ · 1 cup Coconut-Basil Pesto. Heat cooking fat in a large skillet on high heat. When fat has melted and pan is hot, sear broccolini a couple of minutes on each side. Turn heat down to medium, add garlic-infused oil, let cook about 10 min until tender. Serve with pesto drizzled over top.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Coconut-Basil Pesto</div><div class="recipe-card-meta">15 min · yields 1½ cups · spring dressing</div><div class="recipe-card-tags"><span class="tag">Dressing</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">⅔ cup coconut water or filtered water · 2 cups fresh basil leaves, tightly packed · ¼ cup EVOO · 1½-inch piece ginger, peeled and chopped · 2–3 cloves garlic → garlic-infused oil ⚠️ · 1 tbsp ume plum vinegar · 1 lemon, juiced (about 2 tbsp) · a few sprigs of fresh mint. Place all ingredients in a blender and blend on high for 15 seconds, stopping to scrape the sides if needed. Continue to blend until desired consistency is reached. Keeps a couple of days, sealed, in the refrigerator.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Supergreen Tabbouleh</div><div class="recipe-card-meta">20 min · serves 8 · grain-free — broccoli rice base</div><div class="recipe-card-tags"><span class="tag">Salad</span><span class="tag" style="background:#e8f7e8;color:#2a6a2a">Grain-free</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 medium (400 g) broccoli, cut into florets · 2 tbsp EVOO · 2 spring onions · 1 clove garlic → infused oil ⚠️ · ¾ cup fresh parsley · ½ cup fresh mint · 1 medium tomato · 1 medium cucumber · ¼ cup EVOO · ⅓ cup fresh lemon juice · salt and pepper · ¼ cup macadamia nuts or hazelnuts, crushed. Grate or process broccoli florets to rice-size using a box grater or S-blade. Heat oil in pan, add broccoli rice, cook 5 min until just tender. Add spring onions, garlic-infused oil. Whisk EVOO and lemon juice together. Add broccoli with all vegetables, herbs, nuts. Serve immediately or store in a sealed container in fridge up to 4 days.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Apple Cider Vinaigrette</div><div class="recipe-card-meta">5 min · yields ½ cup · spring base dressing</div><div class="recipe-card-tags"><span class="tag">Dressing</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">½ cup EVOO · 2 tbsp apple cider vinegar · ¼ tsp ginger powder · ¼ tsp sea salt. Combine in a small bowl and whisk to incorporate. A great base vinaigrette — add different fruits, herbs, or seasonal additions to create variations week to week. Keeps well in fridge for several days; shake or stir before using.</div></div>
+      </div>
+    </div>
+        <div class="recipe-card"><div class="recipe-card-name">Steak Salad Bowl with Asparagus, Avocado + Gremolata</div><div class="recipe-card-meta">Beef steak · 20 min · serves 2</div><div class="recipe-card-tags"><span class="tag">Spring salad</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 lean beef steaks (300 g) · 2 tbsp avocado oil · salt and pepper · 14–16 asparagus spears, trimmed and cut into 1½-inch pieces · 1 large avocado, sliced · 3 cups dark leafy greens (arugula, spinach, or watercress) · 1 small red onion, sliced · 2 tbsp lemon juice · fresh parsley, chopped · 2–3 cloves garlic → garlic-infused oil ⚠️ · grated lemon zest · 1 tbsp EVOO · Pecorino shavings (sheep's milk ✅, optional). Gremolata: combine parsley, lemon zest, garlic-infused oil, EVOO. Sear steaks 2–4 min per side in oil, season. Add asparagus, cook until just tender. Rest steaks 3 min then slice. Divide greens, asparagus and sliced onion between two bowls. Top with steak and avocado. Drizzle gremolata over and serve.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Pickled Rhubarb + Sesame Beetroot</div><div class="recipe-card-meta">25 min · serves 4 · unique spring salad</div><div class="recipe-card-tags"><span class="tag">Spring salad</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2–3 rhubarb stalks, thinly sliced and pickled in rice vinegar + water + sea salt · 80 ml (2¾ fl oz) vinegar · 2 tbsp coconut sugar · ½ tsp sea salt · 4 spring onions · 40 g sesame seeds · 25 g sesame oil · 2½ tbsp sesame oil · 80 g watercress · 250 g raw beets (around 2 medium), sliced thinly on mandoline · 300 g cooked beets. Stir vinegar, sugar, salt together. Slice rhubarb as finely as possible, toss in pickling mixture. Set aside 10 min. Toast sesame seeds 1–2 min until golden. Shred spring onions finely. Wash watercress. Peel and slice raw beets. Drain rhubarb and scatter over watercress with beets and sesame seeds. Drizzle sesame oil to finish.</div></div>
+
+
+  </div>
+
+<div id="page-summer-menu" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🌻</div>
+    <div class="season-pill">☀️ Summer · Jul – Sep</div>
+    <div class="page-title">Daily Menu</div>
+    <div class="page-period">3-month rotation · repeat weekly</div>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-label">Weekly protein anchors</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 1</div>
+          <div class="schedule-body"><div class="schedule-meal">Breakfast patties — batch Saturday</div><ul class="schedule-items"><li>Venison + fresh basil + fennel seed + lemon zest · red onion · mushroom · parsley · sea salt</li><li>Form 12 · cook half · freeze half · reheat in skillet each morning</li></ul></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 2</div>
+          <div class="schedule-body"><div class="schedule-meal">Roast chicken — Sunday, strips Mon–Wed</div><ul class="schedule-items"><li>Lemon + Green Onion (simple and bright) · 65 min at 200°C · rest 10 min · strip and portion</li></ul></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 3</div>
+          <div class="schedule-body"><div class="schedule-meal">Fish — marinate Saturday, bake Wednesday</div><ul class="schedule-items"><li>Marinated Salmon — Citrus-Ginger · Sear-Roasted Halibut · serves Thu–Sat</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">What's in season — ☀️ Summer · Jul – Sep</div>
+      <div class="guideline-box"><ul class="guideline-items">
+        <li><strong>Stone fruits + berries:</strong> BC blueberries, raspberries, strawberries, nectarines, peaches, cherries — peak. Raspberry-Coconut Cheesecake is the celebration dish. Nectarine + Arugula wraps (sub prosciutto for salmon jerky). Add fresh berries to salads and smoothies.</li>
+        <li><strong>Tomatoes + summer veg:</strong> cherry tomatoes in Mediterranean Salmon · ripe tomatoes for Tomato Nectarine + Avocado salad · eggplant + zucchini in Greek Breakfast Power Bowl</li>
+        <li><strong>Mango + watermelon:</strong> Mango Salsa · Warm Chard, Mango + Crispy Paneer → goat cheese sub · watermelon quick-pickled with rice vinegar for salad contrast</li>
+        <li><strong>Sweetcorn + zucchini:</strong> Citrus Prawn Ceviche Tostadas (charred corn) — use butter lettuce cups not tostadas · zucchini spiralised as a noodle base for fish dishes</li>
+        <li><strong>Wild salmon peak:</strong> BC's best — citrus-ginger marinade or Mediterranean olive/parsley preparation</li>
+        <li><strong>Fresh herbs at peak:</strong> basil (summer patty variation), coriander, mint — all abundant and inexpensive now</li>
+      </ul></div>
+    </div>
+    <div class="section">
+      <div class="section-label">Daily structure — same framework as winter</div>
+      <div class="schedule-grid">
+        <div class="schedule-row"><div class="schedule-time">5:00 AM</div><div class="schedule-body"><div class="schedule-meal">3 hard-boiled eggs + ½ avocado · water with creatine · matcha</div></div></div>
+        <div class="activity-row"><div class="activity-label">Move</div><div class="activity-text">Morning workout · walk outside for early sun exposure</div></div>
+        <div class="schedule-row"><div class="schedule-time">Post-workout</div><div class="schedule-body"><div class="schedule-meal">Patties + seasonal skillet · 60 g protein · 3×3 veg · bone broth · kimchi</div></div></div>
+        <div class="activity-row"><div class="activity-label">11:30 AM</div><div class="activity-text">Walking meditation · water or tea</div></div>
+        <div class="schedule-row"><div class="schedule-time">Lunch Mon–Wed</div><div class="schedule-body"><div class="schedule-meal">Stripped chicken over seasonal salad feast · Caesar or seasonal dressing · toasted seed mix</div></div></div>
+        <div class="schedule-row"><div class="schedule-time">Lunch Thu–Sat</div><div class="schedule-body"><div class="schedule-meal">Flaked fish over seasonal salad feast · Ginger-Lime Coconut Cream Dressing · quick pickles</div></div></div>
+        <div class="activity-row"><div class="activity-label">2–4 PM</div><div class="activity-text">Vigorous exercise · 45–90 min · complete stress cycles</div></div>
+        <div class="schedule-row"><div class="schedule-time">Dinner</div><div class="schedule-body"><div class="schedule-meal">Backup protein: Shrimp + Green Bean Stir-Fry · seasonal salad feast · 3×3 veg · wind-down tea</div></div></div>
+        <div class="activity-row"><div class="activity-label">8:00 PM</div><div class="activity-text">Slow walk · bath · meditation · reading · rest</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">Seasonal dressings</div>
+      <div class="schedule-grid">
+        <div class="schedule-row"><div class="schedule-time">Make Saturday</div><div class="schedule-body" style="display:flex;align-items:center"><span style="font-size:13px;color:var(--muted)">Ginger-Lime Coconut Cream Dressing · Garlic "Mayo" (coconut-based) · plus toasted seed mix in a jar · quick pickles ready</span></div></div>
+      </div>
+    </div>
+  </div>
+
+<div id="page-summer-recipes" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🌻</div>
+    <div class="season-pill">☀️ Summer · Jul – Sep</div>
+    <div class="page-title">Summer Recipes</div>
+    <div class="page-period">All adapted to your guidelines · garlic tagged throughout</div>
+  </div>
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">🔒 Protein anchors</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Summer Breakfast Patties</div><div class="recipe-card-meta">Venison + basil + fennel seed · batch Saturday · makes 12</div><div class="recipe-card-tags"><span class="tag">🔒 Daily anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">700 g ground venison · ½ red onion · 100 g mushrooms · 2 tbsp fresh basil · ½ tsp fennel seed · zest of 1 lemon · 1 tsp sea salt · coconut oil. Mix gently, form 12 patties (~80 g each). Cook 4–5 min per side in coconut oil. Cool, fridge + freeze half. The basil and fennel seed combination is summer at its best.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Lemon + Spring Onion Roast Chicken</div><div class="recipe-card-meta">Whole chicken · 65 min · strips Mon–Wed · serves 4</div><div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">10 spring onions (trivet) · 1 × 1.6 kg chicken · 1½ tbsp EVOO · 1 lemon, halved · sea salt flakes · cracked black pepper. Rub chicken all over with EVOO, place on spring onion trivet, stuff lemon halves inside. Scatter salt and pepper over. Roast at 200°C for 65 min. Rest 10 min, strip while warm, portion into 3 day servings. Simple, bright, endlessly versatile — strips work over any summer salad.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Marinated Salmon — Citrus-Ginger</div><div class="recipe-card-meta">Marinate Saturday · bake Wednesday · serves 4</div><div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 oranges, juiced · 1 tbsp apple cider vinegar · 1 tbsp coconut aminos (optional) · 2 tbsp chopped fresh mint · 1-inch piece ginger, peeled · ¼ tsp sea salt · 4 × 150 g wild salmon fillets. Place all marinade ingredients into a blender and blend 30 sec. Pour over salmon in bag or container — let marinade overnight, flipping once or twice. Bake at 200°C for 15 min, skin-side down. Flake into salads or serve alongside veg.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Sear-Roasted Halibut</div><div class="recipe-card-meta">15 min · serves 2</div><div class="recipe-card-tags"><span class="tag">Fish variation</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">½ orange, juiced · 2 tbsp coconut aminos · ½ lemon, juiced · ¼ tsp ginger powder · ¼ tsp sea salt · 2 tbsp coconut flour · 12 oz fresh halibut, skinned, deboned, cut into 2 portions · 2 tbsp coconut oil · fresh chives for garnish. Combine citrus-amino sauce in a small bowl. Sprinkle sea salt all over fish, dredge in coconut flour. Heat coconut oil in oven-safe skillet on high heat. Sear and flip 2 min. Place skillet immediately in oven at 200°C. Cook 3–5 min until no longer translucent. Serve with citrus-coconut amino sauce.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Shrimp + Green Bean Stir-Fry</div><div class="recipe-card-meta">40 min · serves 3 · midweek backup</div><div class="recipe-card-tags"><span class="tag">Dinner backup</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 tbsp coconut oil · ½ onion, thinly sliced · 4 cloves garlic → infused oil ⚠️ · 2-inch piece ginger, peeled and minced · 2 lbs green beans, stems removed, halved · 1 cup thinly sliced crimini mushrooms · 2 tbsp coconut aminos · 1 tsp honey · 1 lb shrimp, peeled, tails left on · ¼ tsp sea salt · fresh parsley, minced, for garnish. Heat fat in wok on medium-high. When hot, add onion, cook 5 min. Add garlic-infused oil and ginger, stir another couple of minutes. Add mushrooms, coconut aminos, honey, cook a few minutes. Add shrimp and salt, cook until pink throughout, 3–4 min. Garnish with parsley.</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">🥗 Summer salads + condiments</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Cucumber-Mint Salad</div><div class="recipe-card-meta">15 min · serves 2 · summer salad base</div><div class="recipe-card-tags"><span class="tag">Salad base</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 large cucumbers, chopped · ½ small red onion, thinly sliced · 2 tbsp chopped fresh parsley · 2 tbsp chopped fresh mint · 2 tbsp apple cider vinegar · 3 tbsp EVOO · sea salt to taste. Combine cucumbers, onion, parsley, and mint in a bowl. In a small bowl whisk vinegar, olive oil, and salt. Toss dressing with vegetables and serve. Store dressing separate and toss right before serving. Keeps in fridge for a day.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Seared Ahi Tuna Salad with Citrus-Avocado Dressing</div><div class="recipe-card-meta">20 min · serves 4</div><div class="recipe-card-tags"><span class="tag">Fish salad</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">4 × 170 g ahi tuna steaks · ¼ tsp sea salt · 1 tbsp coconut oil · 1 large head romaine, shredded · 1 large carrot, grated · 1 cucumber, halved and sliced · 1 avocado, cubed · 1 tangerine, sectioned · 1 cup Citrus-Avocado Dressing. Salt tuna on both sides. Heat coconut oil on medium-high heat until lightly smoking. Sear tuna 1½ min per side for medium rare. Slice thinly. Combine romaine, carrot, cucumber and toss. Add tuna, avocado, tangerine. Serve with dressing poured over top. Serve this salad the day you make it.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Mango Salsa</div><div class="recipe-card-meta">15 min · yields 2 cups · BC mango season</div><div class="recipe-card-tags"><span class="tag">Condiment</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 large mango, peeled and diced · 1 avocado, diced · ⅓ small red onion, diced · 1 cucumber, diced · 1 bunch cilantro, chopped · 2 cloves garlic → infused oil ⚠️ · ½ tsp sea salt · 1 tbsp olive oil · ½ lime, juiced. Combine all ingredients in a bowl and mix to incorporate. Season to taste with salt. Serve on lettuce boats, with shredded roast chicken, on top of salads, or as condiment. Keeps in fridge several days.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Ginger-Lime Coconut Cream Dressing</div><div class="recipe-card-meta">15 min · yields 1 cup · summer dressing</div><div class="recipe-card-tags"><span class="tag">Dressing</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">½ cup coconut concentrate · ¼ cup filtered water · 2 limes, juiced (about 1 tbsp) · 1 tsp apple cider vinegar · 1½ tsp minced ginger · ¾ tsp sea salt. Combine all ingredients in a blender and mix for a minute until well incorporated. If too thick, add water 1 tbsp at a time. Keeps in fridge several days — warm slightly before using as it hardens when chilled.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Pickled Red Cabbage, Ginger + Pomegranate Slaw</div><div class="recipe-card-meta">15 min · serves 4 · feast menus book</div><div class="recipe-card-tags"><span class="tag">Summer salad</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">200 g red cabbage, finely shredded · ½ tsp sea salt · juice of 1 lime · 60 g cashews · 15 g fresh ginger, finely grated · large bunch coriander, leaves only · 3 tbsp mayonnaise → garlic mayo (coconut-based) · 200 g sweetheart cabbage · 1 small pomegranate or 125 g seeds. Toast cashews 2–3 min in dry pan until golden and fragrant. Grate ginger and squeeze juice over red cabbage with lime and salt. Finely shred coriander and stir into the mayo. Wash sweetheart cabbage, shred, toss through coriander dressing. Then add pickled red cabbage and cashews and scatter over to finish.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Raspberry-Coconut "Cheesecake"</div><div class="recipe-card-meta">1 hr + 24 hrs to set · serves 12 · BC berry season special</div><div class="recipe-card-tags"><span class="tag" style="background:#fdeef3;color:#9a3055">🎉 Monthly dinner</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6"><b style="display:block;font-size:10px;text-transform:uppercase;margin-bottom:3px">Crust:</b>3 cups dates, pitted (soaked 5 min warm water) · 1 cup coconut oil, melted · ½ cup coconut flour · ½ cup fine shredded coconut (unsweetened) · ¼ tsp salt.<br><b style="display:block;font-size:10px;text-transform:uppercase;margin-top:6px;margin-bottom:3px">Filling:</b>1½ cups Coconut Concentrate · 1½ cups whipped honey · 1 cup coconut oil, melted · 4 cups frozen raspberries · 6 tbsp tapioca starch · 1½ tsp vanilla extract (optional) · ¼ tsp salt. Bake crust 30–35 min, blend filling until smooth, pour over cooled crust. Refrigerate minimum 12 hours. Garnish with thick coconut flakes and fresh raspberries. Substitute 3 cups blueberries for a blueberry-lemon variation. Celebration dish — have a slim slice.</div></div>
+      </div>
+    </div>
+        <div class="recipe-card"><div class="recipe-card-name">Nectarine, Arugula + Salmon Jerky Wraps</div><div class="recipe-card-meta">20 min · serves 4 · adapted for your guidelines</div><div class="recipe-card-tags"><span class="tag">Summer snack / starter</span><span class="tag" style="background:#fff8e1;color:#8a6200">🔄 Adapted</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 nectarines, pitted and cut into eighths · 1 cup arugula · salmon jerky strips (sub for prosciutto) · optional: thin slices of Manchego sheep's cheese ✅. Hold a slice of nectarine in your hand and place a few sprigs of arugula alongside. Use a piece of salmon jerky to wrap around the nectarine, about halfway up. Arrange on a serving platter. Variation: use any stone fruit — peaches, plums, and apricots all work well.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Market Salad</div><div class="recipe-card-meta">15 min · serves 4 · whatever needs using up</div><div class="recipe-card-tags"><span class="tag">Year-round base</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 head butter lettuce, washed and torn · ½ small red onion, thinly sliced · 2 medium carrots, shredded · 1 small beet, shredded · 1 cucumber, thinly sliced · ⅓ cup button mushrooms, thinly sliced · 1 cup vinaigrette (Apple Cider, Ginger-Plum, or Blood Orange) · 1 avocado, cubed. Combine lettuce, onion, carrots, beet, cucumber, and mushrooms in a large bowl. Add your choice of vinaigrette and toss gently. Top with fresh avocado and serve. Keep dressing separate; toss and add avocado right before serving.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Pomegranate + Arugula Salad with Fennel</div><div class="recipe-card-meta">15 min · serves 4 · fall/winter border salad</div><div class="recipe-card-tags"><span class="tag">Fall / Winter salad</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">4 cups arugula, loosely packed · 1 small fennel bulb, thinly sliced · 1 cup pomegranate seeds · ¼ cup Blood Orange Vinaigrette (EVOO + blood orange juice + sea salt + lemon) or Apple Cider Vinaigrette. Combine the arugula, fennel slices, and pomegranate seeds in a large bowl. Toss with the vinaigrette and serve. Keep dressing separate and toss right before serving. "Pomegranate signifies colder evenings and heartier eating ahead." Works in both fall and winter.</div></div>
+
+
+  </div>
+
+<div id="page-fall-menu" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🍄</div>
+    <div class="season-pill">🍂 Fall · Oct – Dec</div>
+    <div class="page-title">Daily Menu</div>
+    <div class="page-period">3-month rotation · repeat weekly</div>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-label">Weekly protein anchors</div>
+      <div class="schedule-grid">
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 1</div>
+          <div class="schedule-body"><div class="schedule-meal">Breakfast patties — batch Saturday</div><ul class="schedule-items"><li>Bison + sage + thyme + cinnamon + grated apple · red onion · mushroom · parsley · sea salt</li><li>Form 12 · cook half · freeze half · reheat in skillet each morning</li></ul></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 2</div>
+          <div class="schedule-body"><div class="schedule-meal">Roast chicken — Sunday, strips Mon–Wed</div><ul class="schedule-items"><li>Ginger, Turmeric + Yoghurt (sheep's milk yoghurt ✅) · 65 min at 200°C · rest 10 min · strip and portion</li></ul></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-time">Anchor 3</div>
+          <div class="schedule-body"><div class="schedule-meal">Fish — marinate Saturday, bake Wednesday</div><ul class="schedule-items"><li>Herb-Stuffed Trout · Salmon Chowder (parsnips/carrots halved) · serves Thu–Sat</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">What's in season — 🍂 Fall · Oct – Dec</div>
+      <div class="guideline-box"><ul class="guideline-items">
+        <li><strong>Squash + pumpkin:</strong> Cinnamon-Scented Butternut Squash (½ cup limit) · Warm Pumpkin + Pearl Barley → roasted celeriac cubes + walnuts sub · Shaved Squash, Chickpeas + Sour Cherries with sheep's yoghurt</li>
+        <li><strong>Root vegetables:</strong> Rainbow Roasted Root Vegetables (carrots, beets, parsnips, rutabaga) · Rosemary-Roasted Carrots and Parsnips · batch Saturday, use all week in skillets</li>
+        <li><strong>Apples, pears + pomegranates:</strong> Kale, Apple + Tarragon Slaw · Pear-Caramel Pie (monthly dinner) · grated apple in fall patty variation · pomegranate seeds as salad contrast on any dish</li>
+        <li><strong>Wild mushrooms:</strong> Mushroom + Rosemary (celeriac rice sub) · add to any breakfast skillet · high heat, dry pan — don't crowd or they steam</li>
+        <li><strong>Brussels sprouts + hearty greens:</strong> Brussels roasted on Saturday tray · kale stays robust through fall · cavolo nero in mushroom + rosemary dish</li>
+        <li><strong>Game season peak:</strong> best time to stock the freezer with venison and bison — fill up for winter too</li>
+        <li><strong>Cranberries:</strong> dried cranberries in Mushroom + Rosemary dish · fresh for Apple-Cranberry Crumble (holiday special)</li>
+      </ul></div>
+    </div>
+    <div class="section">
+      <div class="section-label">Daily structure — same framework as winter</div>
+      <div class="schedule-grid">
+        <div class="schedule-row"><div class="schedule-time">5:00 AM</div><div class="schedule-body"><div class="schedule-meal">3 hard-boiled eggs + ½ avocado · water with creatine · matcha</div></div></div>
+        <div class="activity-row"><div class="activity-label">Move</div><div class="activity-text">Morning workout · walk outside for early sun exposure</div></div>
+        <div class="schedule-row"><div class="schedule-time">Post-workout</div><div class="schedule-body"><div class="schedule-meal">Patties + seasonal skillet · 60 g protein · 3×3 veg · bone broth · kimchi</div></div></div>
+        <div class="activity-row"><div class="activity-label">11:30 AM</div><div class="activity-text">Walking meditation · water or tea</div></div>
+        <div class="schedule-row"><div class="schedule-time">Lunch Mon–Wed</div><div class="schedule-body"><div class="schedule-meal">Stripped chicken over seasonal salad feast · Caesar or seasonal dressing · toasted seed mix</div></div></div>
+        <div class="schedule-row"><div class="schedule-time">Lunch Thu–Sat</div><div class="schedule-body"><div class="schedule-meal">Flaked fish over seasonal salad feast · Caesar (coconut/anchovy) · quick pickles</div></div></div>
+        <div class="activity-row"><div class="activity-label">2–4 PM</div><div class="activity-text">Vigorous exercise · 45–90 min · complete stress cycles</div></div>
+        <div class="schedule-row"><div class="schedule-time">Dinner</div><div class="schedule-body"><div class="schedule-meal">Backup protein: Rosemary-Mint Lamb Patties · seasonal salad feast · 3×3 veg · wind-down tea</div></div></div>
+        <div class="activity-row"><div class="activity-label">8:00 PM</div><div class="activity-text">Slow walk · bath · meditation · reading · rest</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">Seasonal dressings</div>
+      <div class="schedule-grid">
+        <div class="schedule-row"><div class="schedule-time">Make Saturday</div><div class="schedule-body" style="display:flex;align-items:center"><span style="font-size:13px;color:var(--muted)">Caesar (coconut/anchovy) · Apple Cider Vinaigrette · Ginger Plum Vinaigrette · plus toasted seed mix in a jar · quick pickles ready</span></div></div>
+      </div>
+    </div>
+  </div>
+
+<div id="page-fall-recipes" class="page">
+  <div class="page-header">
+    <div class="page-header-nature">🍄</div>
+    <div class="season-pill">🍂 Fall · Oct – Dec</div>
+    <div class="page-title">Fall Recipes</div>
+    <div class="page-period">All adapted to your guidelines · garlic tagged throughout</div>
+  </div>
+  <div class="content">
+
+    <div class="section">
+      <div class="section-label">🔒 Protein anchors</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Fall Breakfast Patties</div><div class="recipe-card-meta">Bison + sage + apple · batch Saturday · makes 12</div><div class="recipe-card-tags"><span class="tag">🔒 Daily anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">700 g ground bison · ½ red onion · 100 g mushrooms · 2 tbsp parsley · 1 tbsp sage · 1 tsp thyme · ½ tsp cinnamon · ¼ apple, grated · 1 tsp sea salt · coconut oil. Mix gently, form 12 patties. Cook 4–5 min per side in coconut oil. Cool, fridge + freeze half. The grated apple caramelises and keeps the patties moist — brilliant for cold mornings.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Ginger, Turmeric + Yoghurt Roast Chicken</div><div class="recipe-card-meta">Whole chicken · 65 min · strips Mon–Wed · serves 4</div><div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">3 onions, peeled and halved (trivet) · 1 × 1.6 kg chicken · 1 lemon, halved · 50 g (2 oz) fresh ginger, peeled and roughly chopped · 150 g sheep's milk yoghurt ✅ · 1 tbsp ground cumin · 1 tbsp ground coriander · 1 tbsp smoked paprika · ½ tbsp ground turmeric · 5 garlic cloves → garlic-infused oil ⚠️ · sea salt. Rub onions with ½ tbsp oil, place as trivet. Blend ginger, yoghurt, spices, garlic-infused oil, remaining oil, half lemon juice — rub paste all over and under chicken skin. Roast at 200°C, 65 min. Rest 10 min, strip while warm.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Herb-Stuffed Trout</div><div class="recipe-card-meta">2 whole trout · 30 min · serves 2</div><div class="recipe-card-tags"><span class="tag">🔒 Weekly anchor</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 tbsp coconut oil · 2 whole trout (~450 g each) · ½ tsp sea salt · 1 lemon, sliced into thin rounds · 4 large sprigs fresh rosemary · 4 large sprigs fresh thyme · kitchen twine. Preheat 230°C. Coat baking dish. Sprinkle salt all over inside and outside fish. Fill cavity with lemon rounds and herb sprigs. Tie closed with twine. Bake 15 min until fish flakes easily. Serve whole — eating around the bones, herbs, and lemon.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Rosemary-Mint Lamb Patties</div><div class="recipe-card-meta">Ground lamb · 40 min · makes 12 · dinner backup</div><div class="recipe-card-tags"><span class="tag">Dinner backup</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 lbs ground lamb · 2 tbsp finely chopped fresh mint · 1 tbsp finely chopped fresh rosemary · 1 tsp sea salt · ½ tsp lemon zest · 1 tbsp cooking fat. Combine all ingredients in a large bowl and mix thoroughly. Form into 12 patties using your hands. Heat cooking fat in a cast-iron skillet on medium heat. Cook patties 5–8 min per side until nicely browned on the outside and cooked throughout. Also freezes well — make a double batch.</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">🥗 Fall salads + sides</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Kale, Apple + Tarragon Slaw</div><div class="recipe-card-meta">20 min · serves 4 · feast menus book</div><div class="recipe-card-tags"><span class="tag">Fall salad</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">75 g pecan nuts · 1 tbsp maple syrup · 250 g kale · 1 tsp vinegar · 2 tsp mayonnaise → coconut garlic mayo · 150 g sheep's milk yoghurt ✅ · 1 tbsp olive oil · 2 tbsp capers, drained and crushed · small bunch tarragon, leaves only · 1 small fennel bulb · 1 apple (Granny Smith), grated · ¼ tsp sea salt. Toast pecans briefly, add maple syrup, swirl until coated. Wash kale, shred into 1 cm strips. Massage vinegar, mayo, yoghurt, oil, and capers into kale. Add fennel and apple to the dressed kale. Transfer to platter, scatter over reserved pecan brittle and any fennel fronds.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Cinnamon-Scented Butternut Squash</div><div class="recipe-card-meta">1 hr 15 min · serves 4 · ½ cup limit per serving</div><div class="recipe-card-tags"><span class="tag">Side</span><span class="tag" style="background:#fff8e1;color:#8a6200">🔄 Carb-limited</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">3 lbs butternut squash, peeled, seeds removed, cut into 1¾-inch cubes · 2 tbsp coconut oil, melted · ½ tsp cinnamon · ¼ tsp ginger powder · ¼ tsp sea salt. Preheat 200°C. Combine squash with coconut oil, cinnamon, ginger, and salt. Place in baking dish. Bake about 1 hour, stirring every 20 min. Serve warm. Maximum ½ cup per serving — bulk meal with extra leafy greens alongside. Pairs beautifully with roast chicken or lamb patties.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Mushroom + Rosemary (Celeriac Rice Sub)</div><div class="recipe-card-meta">25 min · serves 4 · grain-free version</div><div class="recipe-card-tags"><span class="tag">Fall side</span><span class="tag" style="background:#fff8e1;color:#8a6200">🔄 Grain-free sub</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 head celeriac, processed to rice-size · 300 g mushrooms, sliced · 2 tbsp EVOO · sea salt · 40 g blanched hazelnuts · 3–4 large sprigs rosemary · 3 garlic cloves → garlic-infused oil ⚠️ · zest and juice of 1 lemon · 35 g dried cranberries or sour cherries. Roast celeriac rice in oven 20 min. Fry mushrooms in dry pan on high heat, 4 min until charred. Add rosemary, garlic-infused oil, 30 sec. Add remaining oil, hazelnuts. Stir celeriac and cranberries through. Toss with lemon zest and juice. Scatter kale on top 2 min before end to steam through.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Sticky Tomato Olive Aubergine</div><div class="recipe-card-meta">30 min · serves 4 · feast menus book</div><div class="recipe-card-tags"><span class="tag">Fall side</span><span class="tag" style="background:#fff0e8;color:#c04800">⚠️ Garlic</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">2 firm aubergines · 90 ml EVOO · 1 red onion · 2 garlic cloves → infused oil ⚠️ · 2 tbsp capers · 400 g tin chopped tomatoes · 30 g sultanas · 1½ tbsp red wine vinegar · 50 g olives · 50 g wild rocket · small bunch flat-leaf parsley · ½ lemon. Cut aubergine into 2.5 cm chunks. Heat pan very hot, add most of oil, cook aubergine 5–6 min until golden. Add remaining oil, reduce heat, add onion and garlic-infused oil, cook 4 min. Add capers, tomatoes, sultanas, vinegar, olives, cook 7–10 min. Wash rocket, dress with lemon. Scatter over aubergine. Toast bread for guests or skip for your serving.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Roasted Mixed Vegetables</div><div class="recipe-card-meta">45 min · serves 4 · fall batch Saturday</div><div class="recipe-card-tags"><span class="tag">Batch side</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">1 large onion, quartered · 4 zucchini, halved lengthwise · 2 portobello mushroom caps, stemmed and halved · 2 tbsp coconut oil, melted · 1 tbsp minced fresh rosemary · sea salt to taste. Preheat 200°C. Place onion, zucchini, and mushrooms in a bowl and coat evenly with the coconut oil and salt. Spread on a baking sheet. Cook 30 min until vegetables are tender and outsides are caramelised. Serve warm. Keeps in fridge for several days.</div></div>
+        <div class="recipe-card"><div class="recipe-card-name">Ginger Plum Vinaigrette</div><div class="recipe-card-meta">5 min · yields ¾ cup · fall dressing</div><div class="recipe-card-tags"><span class="tag">Dressing</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6">½ cup EVOO · 1 tbsp ume plum vinegar · 2 tbsp lemon juice · 1 tsp ginger powder. Combine in a small bowl and whisk to incorporate. Keeps well in fridge for several days — shake or stir before using. Excellent with roasted root vegetables and any fish dish.</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-label">🎉 Monthly friends dinner — 3rd Saturday</div>
+      <div class="recipe-grid">
+        <div class="recipe-card"><div class="recipe-card-name">Pear-Caramel Pie</div><div class="recipe-card-meta">Coconut flour crust · 1 hr 30 min · serves 6</div><div class="recipe-card-tags"><span class="tag" style="background:#fdeef3;color:#9a3055">🎉 Monthly dinner</span></div><div style="background:#fffbef;border:1px solid #e8d080;border-radius:7px;padding:11px 14px;margin-top:10px;font-size:12px;color:#5a4800;line-height:1.6"><b style="display:block;font-size:10px;text-transform:uppercase;margin-bottom:3px">Crust:</b>1 cup coconut flour · 1 cup arrowroot flour · ¼ tsp sea salt · ½ cup coconut oil, cold · ½ cup cold filtered water · 1 tbsp coconut oil, melted.<br><b style="display:block;font-size:10px;text-transform:uppercase;margin-top:6px;margin-bottom:3px">Filling:</b>3 tbsp coconut oil · ¼ cup coconut sugar · 1 tsp cinnamon · ½ tsp sea salt · 1 tsp vanilla extract (optional) · 4 firm pears, halved and cored. Preheat 160°C, make crust with pastry cutter and cold water, bake 15 min until browning. Make caramel: cook coconut oil and sugar 10 min until golden. Blend with pear, pour into crust. Arrange pear slices. Bake 35 min until golden and bubbling. A celebration dish — slim portions.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+const seasonColors = {
+  winter: { accent: '#4a90c4', soft: '#e8f3fb' },
+  spring: { accent: '#4a9e4a', soft: '#edf7ed' },
+  summer: { accent: '#c8a010', soft: '#fdf7dc' },
+  fall:   { accent: '#c9607a', soft: '#fdeef2' }
+};
+
+function setSeasonTheme(season) {
+  const { accent, soft } = seasonColors[season];
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--accent-soft', soft);
+  document.body.className = season;
+}
+
+function toggleSeason(season, btn) {
+  const sub = document.getElementById(season + '-sub');
+  const isOpen = sub.classList.contains('open');
+  if (isOpen) {
+    sub.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    sub.classList.add('open');
+    btn.classList.add('open');
+    showPage(season, 'menu', sub.querySelector('.sub-btn'));
+  }
+}
+
+function showPage(season, section, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+
+  const page = document.getElementById('page-' + season + '-' + section);
+  if (page) page.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  const seasonBtn = document.querySelector('[onclick*="toggleSeason(\'' + season + '\'"]');
+  if (seasonBtn) seasonBtn.classList.add('active');
+
+  setSeasonTheme(season);
+  window.scrollTo(0, 0);
+}
+
+function updatePrep(season) {
+  const page = document.getElementById('page-' + season + '-prep');
+  if (!page) return;
+  const all = page.querySelectorAll('.prep-task input[type="checkbox"]');
+  const done = page.querySelectorAll('.prep-task input[type="checkbox"]:checked');
+  const pct = all.length ? Math.round((done.length / all.length) * 100) : 0;
+  const fill = document.getElementById('prep-fill-' + season);
+  const count = document.getElementById('prep-count-' + season);
+  if (fill) fill.style.width = pct + '%';
+  if (count) count.textContent = done.length + ' / ' + all.length + ' done';
+  done.forEach(cb => cb.closest('.prep-task').classList.add('checked'));
+  page.querySelectorAll('.prep-task input[type="checkbox"]:not(:checked)').forEach(cb => {
+    cb.closest('.prep-task').classList.remove('checked');
+  });
+}
+
+updatePrep('winter');
+
+function showPantry(btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+  const page = document.getElementById('pantry');
+  if (page) page.classList.add('active');
+  if (btn) btn.classList.add('active');
+  const { accent, soft } = seasonColors['winter'];
+  document.documentElement.style.setProperty('--accent', '#7b5ea7');
+  document.documentElement.style.setProperty('--accent-soft', '#f0ebfa');
+  document.body.className = 'techniques';
+  window.scrollTo(0, 0);
+}
+
+</script>
+
+
+<!-- PANTRY PAGE (appended) -->
+<div id="pantry" class="page">
+  <div class="ph"><div class="ph-nat">🫙</div><div class="pill">📖 Pantry</div><div class="pt">Pantry Guide</div><div class="pp">Everything you need stocked to make the system work effortlessly</div></div>
+  <div class="content">
+
+    <div class="sec"><div class="sec-lbl">How to think about your pantry</div>
+      <div class="gbox"><ul>
+        <li>The pantry is what makes 10-minute assembly possible — if it's stocked, every meal is just protein + veg + dressing</li>
+        <li>Divide into three tiers: <strong>always stocked</strong> (never run out), <strong>rotate seasonally</strong> (swap every 3 months), and <strong>restock monthly</strong> (bulk items)</li>
+        <li>Buy EVOO in dark glass, cold-pressed, within 18 months of harvest — the "two-cough" test: a sip should make you cough twice from the oleocanthal</li>
+        <li>Virgin or raw coconut oil only — refined loses its antioxidant properties</li>
+        <li>Dark chocolate: 85%+ minimum, high-flavanol — 28–57 g is the therapeutic dose</li>
+        <li>⚠️ Garlic-infused oil: make your own (see Techniques) or buy pre-made, labelled oil only — not whole garlic</li>
+      </ul></div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫒 Oils — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Primary cooking + dressing</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Extra virgin olive oil (EVOO)</span><span class="shopnote">500 ml+</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Virgin or raw coconut oil</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sesame oil (toasted)</span><span class="shopnote">250 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Garlic-infused olive oil ⚠️</span><span class="shopnote">make or buy</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Avocado oil (high-heat backup)</span><span class="shopnote">250 ml</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🧪 Vinegars + acids — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Core vinegars</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Apple cider vinegar (raw, with mother)</span><span class="shopnote">500 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ume plum vinegar (umeboshi)</span><span class="shopnote">250 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Rice vinegar (unseasoned)</span><span class="shopnote">500 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut aminos</span><span class="shopnote">250 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Fish sauce (no additives)</span><span class="shopnote">250 ml</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🥥 Coconut products — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">For dressings, cooking + baking</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut milk, full-fat (canned)</span><span class="shopnote">4–6 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut concentrate (cream)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut flour</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Shredded coconut (unsweetened)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut sugar (special occasions)</span><span class="shopnote">200 g</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🌿 Dried herbs + spices — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Everyday spices</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sea salt flakes (Maldon or similar)</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Black peppercorns (whole, grind fresh)</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ginger powder</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground cumin</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground coriander</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground turmeric</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Smoked paprika</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground cinnamon</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Chilli flakes</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Fennel seeds</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Cumin seeds (whole)</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Mustard seeds</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Juniper berries</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Asafoetida / hing ⚠️</span><span class="shopnote">garlic sub</span></label>
+        </div></div>
+        <div class="shopcat"><div class="shopcat-h">Dried herbs</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried rosemary</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried thyme</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried oregano</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried dill</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried bay leaves</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried mint</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried sage</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🥜 Nuts + seeds — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">For salad crunch + snacking</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pumpkin seeds (raw)</span><span class="shopnote">400 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sunflower seeds (raw)</span><span class="shopnote">300 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sesame seeds (white + black)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pine nuts</span><span class="shopnote">100 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Flaked almonds</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Walnuts (halves)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Cashews (raw)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Hazelnuts (blanched)</span><span class="shopnote">150 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Macadamia nuts</span><span class="shopnote">150 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pecans</span><span class="shopnote">150 g</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫙 Tins + jars — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Proteins</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sardines in olive oil</span><span class="shopnote">6 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Tuna in olive oil</span><span class="shopnote">4 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Anchovies in olive oil</span><span class="shopnote">2 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Salmon jerky</span><span class="shopnote">2–3 packs</span></label>
+        </div></div>
+        <div class="shopcat"><div class="shopcat-h">Flavour builders</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Kalamata olives (pitted)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Capers (in brine)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sundried tomatoes (in oil)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Tomato paste (no additives)</span><span class="shopnote">1 tube</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Mango chutney (no sugar)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Rose harissa paste</span><span class="shopnote">1 jar</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫧 Fermented + probiotic — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Gut health staples</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Kimchi (raw, unpasteurised)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sauerkraut (raw, unpasteurised)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Kombucha</span><span class="shopnote">4–6 bottles</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried seaweed snacks</span><span class="shopnote">multi-pack</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">💊 Supplements + functional — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Daily supplements</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Creatine monohydrate</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Collagen peptides powder</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Protein powder (no cow dairy)</span><span class="shopnote">1 kg</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🧊 Freezer — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Ready to pull any time</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Breakfast patties (current season)</span><span class="shopnote">2-week supply</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Frozen berries (blueberry, mixed)</span><span class="shopnote">1 kg</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Frozen spinach</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Bone broth (portioned)</span><span class="shopnote">4–6 portions</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Chicken carcasses (for broth)</span><span class="shopnote">accumulate</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Wild salmon fillets</span><span class="shopnote">4–6 fillets</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Lamb meatballs (batch-frozen)</span><span class="shopnote">when made</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🌾 Baking + thickening — restock monthly</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Grain-free baking</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Arrowroot powder</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Tapioca starch</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut flour</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dates (pitted, for desserts)</span><span class="shopnote">300 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Raw honey (special occasions)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pure maple syrup (special occasions)</span><span class="shopnote">250 ml</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🍫 Treats — always stocked, used sparingly</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Snack staples</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dark chocolate 85%+ (high-flavanol)</span><span class="shopnote">2–3 bars</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dehydrated berries (no sugar)</span><span class="shopnote">100 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Liver pâté (no additives)</span><span class="shopnote">1–2 jars</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫙 Salad feast — always ready jar (make Saturday)</div>
+      <div class="gbox"><ul>
+        <li><strong>Toasted seed mix:</strong> pumpkin seeds + sunflower seeds + sesame seeds toasted in a dry pan — cool, store in a jar, lasts all week. Add to every salad.</li>
+        <li><strong>Quick pickle jar:</strong> thinly sliced seasonal veg (red onion, radish, fennel, cucumber) in rice vinegar + water + sea salt — ready in 30 min, lasts 2 weeks.</li>
+        <li><strong>Two dressings in jars:</strong> chosen for the season — shake before using. Lasts 7 days refrigerated.</li>
+        <li><strong>Assembled salad components:</strong> veg pre-roasted and labelled · greens washed and stored · pickles ready · seeds in jar · dressings made. Assembly is 3 minutes any day.</li>
+        <li><strong>The salad feast formula:</strong> leafy base + coloured roasted veg + sulfur veg + quick pickle + toasted seeds + dressing + protein on top. Use the five-element technique (📖 Techniques → Salad assembly).</li>
+      </ul></div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🐑 Sheep + goat dairy — keep in stock</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Approved dairy</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sheep's halloumi</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Manchego (sheep's milk)</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sheep's milk yoghurt</span><span class="shopnote">weekly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sheep's milk feta</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Firm goat cheese (paneer sub)</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ghee (clarified butter)</span><span class="shopnote">1 jar</span></label>
+        </div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- PANTRY PAGE (appended) -->
+<div id="pantry" class="page">
+  <div class="ph"><div class="ph-nat">🫙</div><div class="pill">📖 Pantry</div><div class="pt">Pantry Guide</div><div class="pp">Everything you need stocked to make the system work effortlessly</div></div>
+  <div class="content">
+
+    <div class="sec"><div class="sec-lbl">How to think about your pantry</div>
+      <div class="gbox"><ul>
+        <li>The pantry is what makes 10-minute assembly possible — if it's stocked, every meal is just protein + veg + dressing</li>
+        <li>Divide into three tiers: <strong>always stocked</strong> (never run out), <strong>rotate seasonally</strong> (swap every 3 months), and <strong>restock monthly</strong> (bulk items)</li>
+        <li>Buy EVOO in dark glass, cold-pressed, within 18 months of harvest — the "two-cough" test: a sip should make you cough twice from the oleocanthal</li>
+        <li>Virgin or raw coconut oil only — refined loses its antioxidant properties</li>
+        <li>Dark chocolate: 85%+ minimum, high-flavanol — 28–57 g is the therapeutic dose</li>
+        <li>⚠️ Garlic-infused oil: make your own (see Techniques) or buy pre-made, labelled oil only — not whole garlic</li>
+      </ul></div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫒 Oils — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Primary cooking + dressing</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Extra virgin olive oil (EVOO)</span><span class="shopnote">500 ml+</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Virgin or raw coconut oil</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sesame oil (toasted)</span><span class="shopnote">250 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Garlic-infused olive oil ⚠️</span><span class="shopnote">make or buy</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Avocado oil (high-heat backup)</span><span class="shopnote">250 ml</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🧪 Vinegars + acids — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Core vinegars</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Apple cider vinegar (raw, with mother)</span><span class="shopnote">500 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ume plum vinegar (umeboshi)</span><span class="shopnote">250 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Rice vinegar (unseasoned)</span><span class="shopnote">500 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut aminos</span><span class="shopnote">250 ml</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Fish sauce (no additives)</span><span class="shopnote">250 ml</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🥥 Coconut products — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">For dressings, cooking + baking</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut milk, full-fat (canned)</span><span class="shopnote">4–6 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut concentrate (cream)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut flour</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Shredded coconut (unsweetened)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut sugar (special occasions)</span><span class="shopnote">200 g</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🌿 Dried herbs + spices — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Everyday spices</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sea salt flakes (Maldon or similar)</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Black peppercorns (whole, grind fresh)</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ginger powder</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground cumin</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground coriander</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground turmeric</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Smoked paprika</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ground cinnamon</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Chilli flakes</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Fennel seeds</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Cumin seeds (whole)</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Mustard seeds</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Juniper berries</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Asafoetida / hing ⚠️</span><span class="shopnote">garlic sub</span></label>
+        </div></div>
+        <div class="shopcat"><div class="shopcat-h">Dried herbs</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried rosemary</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried thyme</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried oregano</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried dill</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried bay leaves</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried mint</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried sage</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🥜 Nuts + seeds — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">For salad crunch + snacking</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pumpkin seeds (raw)</span><span class="shopnote">400 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sunflower seeds (raw)</span><span class="shopnote">300 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sesame seeds (white + black)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pine nuts</span><span class="shopnote">100 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Flaked almonds</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Walnuts (halves)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Cashews (raw)</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Hazelnuts (blanched)</span><span class="shopnote">150 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Macadamia nuts</span><span class="shopnote">150 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pecans</span><span class="shopnote">150 g</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫙 Tins + jars — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Proteins</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sardines in olive oil</span><span class="shopnote">6 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Tuna in olive oil</span><span class="shopnote">4 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Anchovies in olive oil</span><span class="shopnote">2 tins</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Salmon jerky</span><span class="shopnote">2–3 packs</span></label>
+        </div></div>
+        <div class="shopcat"><div class="shopcat-h">Flavour builders</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Kalamata olives (pitted)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Capers (in brine)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sundried tomatoes (in oil)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Tomato paste (no additives)</span><span class="shopnote">1 tube</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Mango chutney (no sugar)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Rose harissa paste</span><span class="shopnote">1 jar</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫧 Fermented + probiotic — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Gut health staples</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Kimchi (raw, unpasteurised)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sauerkraut (raw, unpasteurised)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Kombucha</span><span class="shopnote">4–6 bottles</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dried seaweed snacks</span><span class="shopnote">multi-pack</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">💊 Supplements + functional — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Daily supplements</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Creatine monohydrate</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Collagen peptides powder</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Protein powder (no cow dairy)</span><span class="shopnote">1 kg</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🧊 Freezer — always stocked</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Ready to pull any time</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Breakfast patties (current season)</span><span class="shopnote">2-week supply</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Frozen berries (blueberry, mixed)</span><span class="shopnote">1 kg</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Frozen spinach</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Bone broth (portioned)</span><span class="shopnote">4–6 portions</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Chicken carcasses (for broth)</span><span class="shopnote">accumulate</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Wild salmon fillets</span><span class="shopnote">4–6 fillets</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Lamb meatballs (batch-frozen)</span><span class="shopnote">when made</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🌾 Baking + thickening — restock monthly</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Grain-free baking</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Arrowroot powder</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Tapioca starch</span><span class="shopnote">200 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Coconut flour</span><span class="shopnote">500 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dates (pitted, for desserts)</span><span class="shopnote">300 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Raw honey (special occasions)</span><span class="shopnote">1 jar</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Pure maple syrup (special occasions)</span><span class="shopnote">250 ml</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🍫 Treats — always stocked, used sparingly</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Snack staples</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dark chocolate 85%+ (high-flavanol)</span><span class="shopnote">2–3 bars</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Dehydrated berries (no sugar)</span><span class="shopnote">100 g</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Liver pâté (no additives)</span><span class="shopnote">1–2 jars</span></label>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🫙 Salad feast — always ready jar (make Saturday)</div>
+      <div class="gbox"><ul>
+        <li><strong>Toasted seed mix:</strong> pumpkin seeds + sunflower seeds + sesame seeds toasted in a dry pan — cool, store in a jar, lasts all week. Add to every salad.</li>
+        <li><strong>Quick pickle jar:</strong> thinly sliced seasonal veg (red onion, radish, fennel, cucumber) in rice vinegar + water + sea salt — ready in 30 min, lasts 2 weeks.</li>
+        <li><strong>Two dressings in jars:</strong> chosen for the season — shake before using. Lasts 7 days refrigerated.</li>
+        <li><strong>Assembled salad components:</strong> veg pre-roasted and labelled · greens washed and stored · pickles ready · seeds in jar · dressings made. Assembly is 3 minutes any day.</li>
+        <li><strong>The salad feast formula:</strong> leafy base + coloured roasted veg + sulfur veg + quick pickle + toasted seeds + dressing + protein on top. Use the five-element technique (📖 Techniques → Salad assembly).</li>
+      </ul></div>
+    </div>
+
+    <div class="sec"><div class="sec-lbl">🐑 Sheep + goat dairy — keep in stock</div>
+      <div class="shopgrid">
+        <div class="shopcat"><div class="shopcat-h">Approved dairy</div><div class="shopitems">
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sheep's halloumi</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Manchego (sheep's milk)</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sheep's milk yoghurt</span><span class="shopnote">weekly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Sheep's milk feta</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Firm goat cheese (paneer sub)</span><span class="shopnote">monthly</span></label>
+          <label class="shopitem"><input type="checkbox" onchange="this.closest('.shopitem').classList.toggle('done')"><span>Ghee (clarified butter)</span><span class="shopnote">1 jar</span></label>
+        </div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
